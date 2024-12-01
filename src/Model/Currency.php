@@ -7,11 +7,35 @@ namespace Hamed\Countries\Model;
 class Currency
 {
     /** @var string */
-    public $code;
+    private $name;
 
     /** @var string */
-    public $name;
+    private $symbol;
 
-    /** @var string */
-    public $symbol;
+    /**
+     * @param string $name
+     * @param string $symbol
+     * @return void
+     */
+    public function __construct(string $name, string $symbol)
+    {
+        $this->name = $name;
+        $this->symbol = $symbol;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSymbol(): string
+    {
+        return $this->symbol;
+    }
 }

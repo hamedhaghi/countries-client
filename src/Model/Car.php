@@ -7,8 +7,35 @@ namespace Hamed\Countries\Model;
 class Car
 {
     /** @var array<int,string> */
-    public $signs;
+    private $signs;
 
     /** @var string */
-    public $side;
+    private $side;
+
+    /**
+     * @param array<int,string> $signs
+     * @param string $side
+     * @return void
+     * */
+    public function __construct(array $signs, string $side)
+    {
+        $this->signs = $signs;
+        $this->side = $side;
+    }
+
+    /**
+     *  @return array<int,string>
+     * */
+    public function getSigns(): array
+    {
+        return $this->signs;
+    }
+
+    /**
+     * @return string
+     * */
+    public function getSide(): string
+    {
+        return $this->side;
+    }
 }

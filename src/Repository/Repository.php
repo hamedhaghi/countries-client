@@ -4,32 +4,29 @@ declare(strict_types=1);
 
 namespace Hamed\Countries\Repository;
 
+use GuzzleHttp\ClientInterface;
+use Hamed\Countries\Normalizer\CountryNormalizer;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
-use Symfony\Component\Serializer\Serializer;
-use GuzzleHttp\Client;
-use Dotenv\Dotenv;
+use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Serializer;
 
 abstract class Repository
 {
-    /** @var Client */
+    /** @var ClientInterface */
     protected $http;
 
     /** @var Serializer */
     protected $serializer;
 
-    public function __construct()
-    {
-        Dotenv::createImmutable(__DIR__ . '/../../')->load();
-        $this->http = new Client([
-            'base_uri' => getenv('REST_COUNTRIES_API_URL'),
-            'headers' => [
-                'Accept' => 'application/json',
-                'Accept-Encoding' => 'gzip, deflate',
-            ],
-        ]);
+    public function __construct(
+        ClientInterface $http
+    ) {
+        $this->http = $http;
         $this->serializer = new Serializer([
+            new CountryNormalizer(),
             new ObjectNormalizer(),
+            new ArrayDenormalizer(),
         ], [
             new JsonEncoder(),
         ]);

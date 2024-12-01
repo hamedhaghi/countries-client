@@ -6,7 +6,23 @@ namespace Hamed\Countries\Model;
 
 class CapitalInfo
 {
-
     /** @var array<int,float> */
-    public $latlng;
+    private $latlng;
+
+    /**
+     * @param array<int,float> $latlng
+     * @return void
+     */
+    public function __construct(array $latlng)
+    {
+        $this->latlng = $latlng;
+    }
+
+    /**
+     * @return array<int,float>
+     */
+    public function getLatlng(): array
+    {
+        return $this->latlng;
+    }
 }

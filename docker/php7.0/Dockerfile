@@ -19,5 +19,5 @@ WORKDIR /app
 # Add Composer's global bin to PATH (use correct location for PHP Alpine image)
 ENV PATH="/root/.composer/vendor/bin:${PATH}"
 
-# Default command (can be overridden with `docker run`)
-CMD ["bash"]
+# Run the command
+CMD ["tail", "-f", "/dev/null"]
