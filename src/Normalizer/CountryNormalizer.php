@@ -113,6 +113,7 @@ class CountryNormalizer implements DenormalizerInterface
             $data['capital'] ?? [],
             $data['altSpellings'] ?? [],
             $data['region'] ?? '',
+            $data['subregion'] ?? '',
             $languages,
             $translations,
             $data['latlng'] ?? [],

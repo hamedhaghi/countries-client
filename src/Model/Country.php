@@ -47,6 +47,9 @@ class Country
 	/** @var string */
 	private $region;
 
+	/** @var string */
+	private $subregion;
+
 	/** @var array<string,Language> */
 	private $languages;
 
@@ -109,6 +112,7 @@ class Country
 		array $capital,
 		array $altSpellings,
 		string $region,
+		string $subregion,
 		array $languages,
 		array $translations,
 		array $latlng,
@@ -139,6 +143,7 @@ class Country
 		$this->capital = $capital;
 		$this->altSpellings = $altSpellings;
 		$this->region = $region;
+		$this->subregion = $subregion;
 		$this->languages = $languages;
 		$this->translations = $translations;
 		$this->latlng = $latlng;
@@ -259,6 +264,14 @@ class Country
 	public function getRegion(): string
 	{
 		return $this->region;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getSubregion(): string
+	{
+		return $this->subregion;
 	}
 
 	/**
