@@ -5,38 +5,35 @@ declare(strict_types=1);
 namespace Hamed\Countries\Repository;
 
 use GuzzleHttp\ClientInterface;
-use Hamed\Countries\Normalizer\CountryNormalizer;
-use Symfony\Component\Serializer\Encoder\JsonEncoder;
-use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
-use Symfony\Component\Serializer\Serializer;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use Symfony\Component\Serializer\SerializerInterface;
 
 abstract class Repository
 {
     /** @var ClientInterface */
     protected $http;
 
-    /** @var Serializer */
+    /** @var SerializerInterface */
     protected $serializer;
 
+    /** @var FilesystemAdapter */
+    protected $cacheAdapter;
+
     public function __construct(
-        ClientInterface $http
+        ClientInterface $http,
+        SerializerInterface $serializer,
+        FilesystemAdapter $cacheAdapter
     ) {
         $this->http = $http;
-        $this->serializer = new Serializer([
-            new CountryNormalizer(),
-            new ObjectNormalizer(),
-            new ArrayDenormalizer(),
-        ], [
-            new JsonEncoder(),
-        ]);
+        $this->serializer = $serializer;
+        $this->cacheAdapter = $cacheAdapter;
     }
 
     /**
      * @param mixed $data
      * @return string
      */
-    public function serialize($data): string
+    protected function serialize($data): string
     {
         return $this->serializer->serialize($data, 'json');
     }
@@ -46,8 +43,23 @@ abstract class Repository
      * @param string $class
      * @return object|array
      */
-    public function deserialize(string $data, string $class)
+    protected function deserialize(string $data, string $class)
     {
         return $this->serializer->deserialize($data, $class, 'json');
+    }
+
+    protected function getResponse(string $uri): string
+    {
+        if (static::$isCachable) {
+            $cacheItem = $this->cacheAdapter->getItem($uri);
+            if (!$cacheItem->isHit()) {
+                $data = $this->http->request('GET', $uri)->getBody()->getContents();
+                $cacheItem->set($data);
+                $this->cacheAdapter->save($cacheItem);
+                return $data;
+            }
+        }
+        
+        return $this->http->request('GET', $uri)->getBody()->getContents();
     }
 }

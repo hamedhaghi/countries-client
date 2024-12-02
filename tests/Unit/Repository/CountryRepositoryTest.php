@@ -4,14 +4,21 @@ declare(strict_types=1);
 
 namespace Hamed\Countries\Tests\Unit\Repository;
 
-use PHPUnit\Framework\TestCase;
-use Hamed\Countries\Repository\CountryRepository;
-use PHPUnit\Framework\MockObject\MockObject;
 use GuzzleHttp\ClientInterface;
+use Hamed\Countries\Model\Country;
+use Hamed\Countries\Normalizer\CountryNormalizer;
+use Hamed\Countries\Repository\CountryRepository;
 use Hamed\Countries\Tests\Fixture\Response;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
-use Hamed\Countries\Model\Country;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Serializer;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class CountryRepositoryTest extends TestCase
 {
@@ -24,6 +31,12 @@ class CountryRepositoryTest extends TestCase
     /** @var StreamInterface|MockObject */
     protected $stream;
 
+    /** @var SerializerInterface */
+    protected $serializer;
+
+    /** @var FilesystemAdapter */
+    protected $cacheAdapter;
+
     /** @var CountryRepository */
     protected $countryRepository;
 
@@ -32,14 +45,25 @@ class CountryRepositoryTest extends TestCase
         $this->client = $this->createMock(ClientInterface::class);
         $this->response = $this->createMock(ResponseInterface::class);
         $this->stream = $this->createMock(StreamInterface::class);
-        $this->countryRepository = new CountryRepository($this->client);
+        $this->serializer = new Serializer([
+            new CountryNormalizer(),
+            new ObjectNormalizer(),
+            new ArrayDenormalizer(),
+        ], [
+            new JsonEncoder(),
+        ]);
+        $this->countryRepository = new CountryRepository(
+            $this->client, 
+            $this->serializer,
+            $this->cacheAdapter
+        );
     }
 
     public function testGetAllCountries()
     {
         $this->client->expects($this->once())
             ->method('request')
-            ->with('GET', 'all')
+            ->with(['GET', 'all'])
             ->willReturn($this->response);
 
         $this->response->expects($this->once())
@@ -48,7 +72,7 @@ class CountryRepositoryTest extends TestCase
 
         $this->stream->expects($this->once())
             ->method('getContents')
-            ->willReturn(Response::all());
+            ->willReturn(null);
 
         $countries = $this->countryRepository->getAll();
 

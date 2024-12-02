@@ -10,8 +10,8 @@ class CountryRepository extends Repository
 {
     public function getAll(): array
     {
-        $response = $this->http->request('GET', 'all');
-        return $this->deserialize($response->getBody()->getContents(), Country::class . '[]');
+        $data = $this->getResponse('all');
+        return $this->deserialize($data, Country::class . '[]');
     }
 
     public function getByCapital(string $capital): array
