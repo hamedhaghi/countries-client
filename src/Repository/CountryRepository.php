@@ -10,67 +10,91 @@ class CountryRepository extends Repository
 {
     public function getAll(): array
     {
-        $data = $this->getResponse('all');
-        return $this->deserialize($data, Country::class . '[]');
+        return $this->deserialize(
+            $this->client->request('GET', 'all')->getData(),
+            Country::class . '[]'
+        );
     }
 
     public function getByCapital(string $capital): array
     {
-        $response = $this->http->request('GET', 'capital/' . $capital);
-        return $this->deserialize($response->getBody()->getContents(), Country::class . '[]');
+        return $this->deserialize(
+            $this->client->request('GET', 'capital/' . $capital)->getData()
+            ,
+            Country::class . '[]'
+        );
     }
 
     public function getByCode(string $code): array
     {
-        $response = $this->http->request('GET', 'alpha/' . $code);
-        return $this->deserialize($response->getBody()->getContents(), Country::class . '[]');
+        return $this->deserialize(
+            $this->client->request('GET', 'alpha/' . $code)->getData(),
+            Country::class . '[]'
+        );
     }
 
     public function getByCurrency(string $currency): array
     {
-        $response = $this->http->request('GET', 'currency/' . $currency);
-        return $this->deserialize($response->getBody()->getContents(), Country::class . '[]');
+        return $this->deserialize(
+            $this->client->request('GET', 'currency/' . $currency)->getData(),
+            Country::class . '[]'
+        );
     }
 
     public function getByDemonym(string $demonym): array
     {
-        $response = $this->http->request('GET', 'demonym/' . $demonym);
-        return $this->deserialize($response->getBody()->getContents(), Country::class . '[]');
+        return $this->deserialize(
+            $this->client->request('GET', 'demonym/' . $demonym)->getData(),
+            Country::class . '[]'
+        );
     }
 
     public function getByFullName(string $name): array
     {
-        $response = $this->http->request('GET', 'name/' . $name . '?fullText=true');
-        return $this->deserialize($response->getBody()->getContents(), Country::class . '[]');
+        return $this->deserialize(
+            $this->client->request('GET', 'name/' . $name . '?fullText=true')->getData(),
+            Country::class . '[]'
+        );
     }
 
     public function getByLanguage(string $language): array
     {
-        $response = $this->http->request('GET', 'lang/' . $language);
-        return $this->deserialize($response->getBody()->getContents(), Country::class . '[]');
+        return $this->deserialize(
+            $this->client->request('GET', 'lang/' . $language)->getData(),
+            Country::class . '[]'
+        );
     }
 
     public function getByName(string $name): array
     {
-        $response = $this->http->request('GET', 'name/' . $name);
-        return $this->deserialize($response->getBody()->getContents(), Country::class . '[]');
+        ;
+        return $this->deserialize(
+            $this->client->request('GET', 'name/' . $name)->getData(),
+            Country::class . '[]'
+        );
     }
 
     public function getByRegion(string $region): array
     {
-        $response = $this->http->request('GET', 'region/' . $region);
-        return $this->deserialize($response->getBody()->getContents(), Country::class . '[]');
+        return $this->deserialize(
+            $this->client->request('GET', 'region/' . $region)->getData(),
+            Country::class . '[]'
+        );
     }
 
     public function getBySubregion(string $subregion): array
     {
-        $response = $this->http->request('GET', 'subregion/' . $subregion);
-        return $this->deserialize($response->getBody()->getContents(), Country::class . '[]');
+        return $this->deserialize(
+            $this->client->request('GET', 'subregion/' . $subregion)->getData(),
+            Country::class . '[]'
+        );
     }
 
     public function getByTranslation(string $translation): array
     {
-        $response = $this->http->request('GET', 'translation/' . $translation);
-        return $this->deserialize($response->getBody()->getContents(), Country::class . '[]');
+        return $this->deserialize(
+            $this->client->request('GET', 'translation/' . $translation)->getData(),
+            Country::class . '[]'
+        );
     }
 }

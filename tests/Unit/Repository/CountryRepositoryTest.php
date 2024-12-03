@@ -4,16 +4,13 @@ declare(strict_types=1);
 
 namespace Hamed\Countries\Tests\Unit\Repository;
 
-use GuzzleHttp\ClientInterface;
+use Hamed\Countries\Http\Client;
 use Hamed\Countries\Model\Country;
 use Hamed\Countries\Normalizer\CountryNormalizer;
 use Hamed\Countries\Repository\CountryRepository;
 use Hamed\Countries\Tests\Fixture\Response;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\StreamInterface;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
@@ -22,29 +19,18 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class CountryRepositoryTest extends TestCase
 {
-    /** @var ClientInterface|MockObject */
+    /** @var Client|MockObject */
     protected $client;
-
-    /** @var ResponseInterface|MockObject */
-    protected $response;
-
-    /** @var StreamInterface|MockObject */
-    protected $stream;
 
     /** @var SerializerInterface */
     protected $serializer;
-
-    /** @var FilesystemAdapter */
-    protected $cacheAdapter;
 
     /** @var CountryRepository */
     protected $countryRepository;
 
     protected function setUp()
     {
-        $this->client = $this->createMock(ClientInterface::class);
-        $this->response = $this->createMock(ResponseInterface::class);
-        $this->stream = $this->createMock(StreamInterface::class);
+        $this->client = $this->createMock(Client::class);
         $this->serializer = new Serializer([
             new CountryNormalizer(),
             new ObjectNormalizer(),
@@ -52,47 +38,84 @@ class CountryRepositoryTest extends TestCase
         ], [
             new JsonEncoder(),
         ]);
+
         $this->countryRepository = new CountryRepository(
-            $this->client, 
-            $this->serializer,
-            $this->cacheAdapter
+            $this->client,
+            $this->serializer
         );
     }
 
     public function testGetAllCountries()
     {
-        $this->client->expects($this->once())
+        $this->client
+            ->expects($this->once())
             ->method('request')
-            ->with(['GET', 'all'])
-            ->willReturn($this->response);
+            ->with(...['GET', 'all'])
+            ->willReturn($this->client);
 
-        $this->response->expects($this->once())
-            ->method('getBody')
-            ->willReturn($this->stream);
+        $this->client
+            ->expects($this->once())
+            ->method('getData')
+            ->willReturn('[
+                {
+                    "name": {
+                        "common": "South Georgia",
+                        "official": "South Georgia and the South Sandwich Islands",
+                        "nativeName": {
+                            "eng": {
+                                "official": "South Georgia and the South Sandwich Islands",
+                                "common": "South Georgia"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": {
+                        "common": "Grenada",
+                        "official": "Grenada",
+                        "nativeName": {
+                            "eng": {
+                                "official": "Grenada",
+                                "common": "Grenada"
+                            }
+                        }
+                    }
+                }
+            ]'
+        );
 
-        $this->stream->expects($this->once())
-            ->method('getContents')
-            ->willReturn(null);
-
-        $countries = $this->countryRepository->getAll();
-
-        $this->assertNotEmpty($countries);
+        $this->assertNotEmpty($this->countryRepository->getAll());
     }
 
     public function testGetCountriesByCapital()
     {
-        $this->client->expects($this->once())
+        $this->client
+            ->expects($this->once())
             ->method('request')
-            ->with('GET', 'capital/berlin')
-            ->willReturn($this->response);
+            ->with(...['GET', 'capital/berlin'])
+            ->willReturn($this->client);
 
-        $this->response->expects($this->once())
-            ->method('getBody')
-            ->willReturn($this->stream);
-
-        $this->stream->expects($this->once())
-            ->method('getContents')
-            ->willReturn(Response::byCapital());
+        $this->client
+            ->expects($this->once())
+            ->method('getData')
+            ->willReturn('[
+                {
+                    "name": {
+                        "common": "Germany",
+                        "official": "Federal Republic of Germany",
+                        "nativeName": {
+                            "deu": {
+                                "official": "Bundesrepublik Deutschland",
+                                "common": "Deutschland"
+                            }
+                        }
+                    },
+                    "capital": [
+                        "Berlin"
+                    ]
+                }
+            ]'
+        );
 
         $countries = $this->countryRepository->getByCapital('berlin');
 
@@ -157,7 +180,6 @@ class CountryRepositoryTest extends TestCase
             }
         }
     }
-
 
     public function testGetCountriesByDemonym()
     {

@@ -4,29 +4,23 @@ declare(strict_types=1);
 
 namespace Hamed\Countries\Repository;
 
-use GuzzleHttp\ClientInterface;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use Hamed\Countries\Http\Client;
 use Symfony\Component\Serializer\SerializerInterface;
 
 abstract class Repository
 {
-    /** @var ClientInterface */
-    protected $http;
+    /** @var Client */
+    protected $client;
 
     /** @var SerializerInterface */
     protected $serializer;
 
-    /** @var FilesystemAdapter */
-    protected $cacheAdapter;
-
     public function __construct(
-        ClientInterface $http,
-        SerializerInterface $serializer,
-        FilesystemAdapter $cacheAdapter
+        Client $client,
+        SerializerInterface $serializer
     ) {
-        $this->http = $http;
+        $this->client = $client;
         $this->serializer = $serializer;
-        $this->cacheAdapter = $cacheAdapter;
     }
 
     /**
@@ -46,20 +40,5 @@ abstract class Repository
     protected function deserialize(string $data, string $class)
     {
         return $this->serializer->deserialize($data, $class, 'json');
-    }
-
-    protected function getResponse(string $uri): string
-    {
-        if (static::$isCachable) {
-            $cacheItem = $this->cacheAdapter->getItem($uri);
-            if (!$cacheItem->isHit()) {
-                $data = $this->http->request('GET', $uri)->getBody()->getContents();
-                $cacheItem->set($data);
-                $this->cacheAdapter->save($cacheItem);
-                return $data;
-            }
-        }
-        
-        return $this->http->request('GET', $uri)->getBody()->getContents();
     }
 }
