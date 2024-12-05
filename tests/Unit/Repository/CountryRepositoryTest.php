@@ -6,9 +6,9 @@ namespace Hamed\Countries\Tests\Unit\Repository;
 
 use Hamed\Countries\Http\Client;
 use Hamed\Countries\Model\Country;
+use Hamed\Countries\Model\Currency;
 use Hamed\Countries\Normalizer\CountryNormalizer;
 use Hamed\Countries\Repository\CountryRepository;
-use Hamed\Countries\Tests\Fixture\Response;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
@@ -82,7 +82,7 @@ class CountryRepositoryTest extends TestCase
                     }
                 }
             ]'
-        );
+            );
 
         $this->assertNotEmpty($this->countryRepository->getAll());
     }
@@ -115,13 +115,14 @@ class CountryRepositoryTest extends TestCase
                     ]
                 }
             ]'
-        );
+            );
 
         $countries = $this->countryRepository->getByCapital('berlin');
 
         $this->assertNotEmpty($countries);
 
         foreach ($countries as $country) {
+            /** @var Currency $currency */
             $this->assertInstanceOf(Country::class, $country);
             $this->assertEquals('Berlin', $country->getCapital()[0]);
         }
@@ -129,24 +130,43 @@ class CountryRepositoryTest extends TestCase
 
     public function testGetCountriesByCode()
     {
-        $this->client->expects($this->once())
+        $this->client
+            ->expects($this->once())
             ->method('request')
-            ->with('GET', 'alpha/de')
-            ->willReturn($this->response);
+            ->with(...['GET', 'alpha/de'])
+            ->willReturn($this->client);
 
-        $this->response->expects($this->once())
-            ->method('getBody')
-            ->willReturn($this->stream);
-
-        $this->stream->expects($this->once())
-            ->method('getContents')
-            ->willReturn(Response::byCode());
+        $this->client
+            ->expects($this->once())
+            ->method('getData')
+            ->willReturn('[
+                {
+                    "name": {
+                        "common": "Germany",
+                        "official": "Federal Republic of Germany",
+                        "nativeName": {
+                            "deu": {
+                                "official": "Bundesrepublik Deutschland",
+                                "common": "Deutschland"
+                            }
+                        }
+                    },
+                    "cca2": "DE",
+                    "cca3": "DEU",
+                    "ccn3": "276",
+                    "capital": [
+                        "Berlin"
+                    ]
+                }
+            ]'
+            );
 
         $countries = $this->countryRepository->getByCode('de');
 
         $this->assertNotEmpty($countries);
 
         foreach ($countries as $country) {
+            /** @var Currency $currency */
             $this->assertInstanceOf(Country::class, $country);
             $this->assertEquals('DE', $country->getCca2());
             $this->assertEquals('276', $country->getCcn3());
@@ -156,18 +176,42 @@ class CountryRepositoryTest extends TestCase
 
     public function testGetCountriesByCurrency()
     {
-        $this->client->expects($this->once())
+        $this->client
+            ->expects($this->once())
             ->method('request')
-            ->with('GET', 'currency/euro')
-            ->willReturn($this->response);
+            ->with(...['GET', 'currency/euro'])
+            ->willReturn($this->client);
 
-        $this->response->expects($this->once())
-            ->method('getBody')
-            ->willReturn($this->stream);
-
-        $this->stream->expects($this->once())
-            ->method('getContents')
-            ->willReturn(Response::byCurrency());
+        $this->client
+            ->expects($this->once())
+            ->method('getData')
+            ->willReturn('[
+            {
+                "name": {
+                    "common": "Germany",
+                    "official": "Federal Republic of Germany",
+                    "nativeName": {
+                        "deu": {
+                            "official": "Bundesrepublik Deutschland",
+                            "common": "Deutschland"
+                        }
+                    }
+                },
+                "cca2": "DE",
+                "cca3": "DEU",
+                "ccn3": "276",
+                "capital": [
+                    "Berlin"
+                ],
+                "currencies": { 
+                    "EUR": {
+                        "name": "Euro",
+                        "symbol": "€"   
+                    }
+                }
+            }
+        ]'
+            );
 
         $countries = $this->countryRepository->getByCurrency('euro');
 
@@ -176,36 +220,78 @@ class CountryRepositoryTest extends TestCase
         foreach ($countries as $country) {
             $this->assertInstanceOf(Country::class, $country);
             foreach ($country->getCurrencies() as $currency) {
+                /** @var Currency $currency */
                 $this->assertEquals('Euro', $currency->getName());
+                $this->assertEquals('€', $currency->getSymbol());
             }
         }
     }
 
     public function testGetCountriesByDemonym()
     {
-        $this->client->expects($this->once())
+        $this->client
+            ->expects($this->once())
             ->method('request')
-            ->with('GET', 'demonym/german')
-            ->willReturn($this->response);
+            ->with(...['GET', 'demonym/german'])
+            ->willReturn($this->client);
 
-        $this->response->expects($this->once())
-            ->method('getBody')
-            ->willReturn($this->stream);
+        $this->client
+            ->expects($this->once())
+            ->method('getData')
+            ->willReturn('[
+            {
+                "name": {
+                    "common": "Germany",
+                    "official": "Federal Republic of Germany",
+                    "nativeName": {
+                        "deu": {
+                            "official": "Bundesrepublik Deutschland",
+                            "common": "Deutschland"
+                        }
+                    }
+                },
+                "cca2": "DE",
+                "cca3": "DEU",
+                "ccn3": "276",
+                "capital": [
+                    "Berlin"
+                ],
+                "currencies": { 
+                    "EUR": {
+                        "name": "Euro",
+                        "symbol": "€"   
+                    }
+                },
+                "demonyms": {
+                    "eng": {
+                        "f": "German",
+                        "m": "German"
+                    },
+                    "fra": {
+                        "f": "Allemande",
+                        "m": "Allemand"
+                    }
+                }        
+            }
+        ]'
+            );
 
-        $this->stream->expects($this->once())
-            ->method('getContents')
-            ->willReturn(Response::byDemonym());
 
         $countries = $this->countryRepository->getByDemonym('german');
 
         $this->assertNotEmpty($countries);
 
         foreach ($countries as $country) {
+            /** @var Country $country */
             $this->assertInstanceOf(Country::class, $country);
             foreach ($country->getDemonyms() as $key => $demonym) {
                 if ($key === 'eng') {
                     $this->assertEquals('German', $demonym->getF());
                     $this->assertEquals('German', $demonym->getM());
+                }
+                if ($key === 'fra') {
+                    $this->assertEquals('Allemande', $demonym->getF());
+                    $this->assertEquals('Allemand', $demonym->getM());
                 }
             }
         }
@@ -213,24 +299,59 @@ class CountryRepositoryTest extends TestCase
 
     public function testGetCountriesByFullName()
     {
-        $this->client->expects($this->once())
+        $this->client
+            ->expects($this->once())
             ->method('request')
-            ->with('GET', 'name/germany?fullText=true')
-            ->willReturn($this->response);
+            ->with(...['GET', 'name/germany?fullText=true'])
+            ->willReturn($this->client);
 
-        $this->response->expects($this->once())
-            ->method('getBody')
-            ->willReturn($this->stream);
-
-        $this->stream->expects($this->once())
-            ->method('getContents')
-            ->willReturn(Response::byFullName());
+        $this->client
+            ->expects($this->once())
+            ->method('getData')
+            ->willReturn('[
+        {
+            "name": {
+                "common": "Germany",
+                "official": "Federal Republic of Germany",
+                "nativeName": {
+                    "deu": {
+                        "official": "Bundesrepublik Deutschland",
+                        "common": "Deutschland"
+                    }
+                }
+            },
+            "cca2": "DE",
+            "cca3": "DEU",
+            "ccn3": "276",
+            "capital": [
+                "Berlin"
+            ],
+            "currencies": { 
+                "EUR": {
+                    "name": "Euro",
+                    "symbol": "€"   
+                }
+            },
+            "demonyms": {
+                "eng": {
+                    "f": "German",
+                    "m": "German"
+                },
+                "fra": {
+                    "f": "Allemande",
+                    "m": "Allemand"
+                }
+            }        
+        }
+    ]'
+            );
 
         $countries = $this->countryRepository->getByFullName('germany');
 
         $this->assertNotEmpty($countries);
 
         foreach ($countries as $country) {
+            /** @var Country $country */
             $this->assertInstanceOf(Country::class, $country);
             $this->assertEquals('Germany', $country->getName()->getCommon());
             $this->assertEquals('Federal Republic of Germany', $country->getName()->getOfficial());
@@ -240,27 +361,66 @@ class CountryRepositoryTest extends TestCase
 
     public function testGetCountriesByLanguage()
     {
-        $this->client->expects($this->once())
+
+        $this->client
+            ->expects($this->once())
             ->method('request')
-            ->with('GET', 'lang/german')
-            ->willReturn($this->response);
+            ->with(...['GET', 'lang/german'])
+            ->willReturn($this->client);
 
-        $this->response->expects($this->once())
-            ->method('getBody')
-            ->willReturn($this->stream);
-
-        $this->stream->expects($this->once())
-            ->method('getContents')
-            ->willReturn(Response::byLanguage());
+        $this->client
+            ->expects($this->once())
+            ->method('getData')
+            ->willReturn('[
+    {
+        "name": {
+            "common": "Germany",
+            "official": "Federal Republic of Germany",
+            "nativeName": {
+                "deu": {
+                    "official": "Bundesrepublik Deutschland",
+                    "common": "Deutschland"
+                }
+            }
+        },
+        "cca2": "DE",
+        "cca3": "DEU",
+        "ccn3": "276",
+        "capital": [
+            "Berlin"
+        ],
+        "currencies": { 
+            "EUR": {
+                "name": "Euro",
+                "symbol": "€"   
+            }
+        },
+        "demonyms": {
+            "eng": {
+                "f": "German",
+                "m": "German"
+            },
+            "fra": {
+                "f": "Allemande",
+                "m": "Allemand"
+            }
+        },
+        "languages": {
+            "deu": "German"
+        }        
+    }
+]'
+            );
 
         $countries = $this->countryRepository->getByLanguage('german');
 
         $this->assertNotEmpty($countries);
 
         foreach ($countries as $country) {
+            /** @var Country $country */
             $this->assertInstanceOf(Country::class, $country);
             foreach ($country->getLanguages() as $key => $language) {
-                $this->assertEquals('de', $key);
+                $this->assertEquals('deu', $key);
                 $this->assertEquals('German', $language->getName());
             }
         }
@@ -268,24 +428,62 @@ class CountryRepositoryTest extends TestCase
 
     public function testGetCountriesByName()
     {
-        $this->client->expects($this->once())
+        $this->client
+            ->expects($this->once())
             ->method('request')
-            ->with('GET', 'name/germany')
-            ->willReturn($this->response);
+            ->with(...['GET', 'name/germany'])
+            ->willReturn($this->client);
 
-        $this->response->expects($this->once())
-            ->method('getBody')
-            ->willReturn($this->stream);
-
-        $this->stream->expects($this->once())
-            ->method('getContents')
-            ->willReturn(Response::byName());
+        $this->client
+            ->expects($this->once())
+            ->method('getData')
+            ->willReturn('[
+{
+    "name": {
+        "common": "Germany",
+        "official": "Federal Republic of Germany",
+        "nativeName": {
+            "deu": {
+                "official": "Bundesrepublik Deutschland",
+                "common": "Deutschland"
+            }
+        }
+    },
+    "cca2": "DE",
+    "cca3": "DEU",
+    "ccn3": "276",
+    "capital": [
+        "Berlin"
+    ],
+    "currencies": { 
+        "EUR": {
+            "name": "Euro",
+            "symbol": "€"   
+        }
+    },
+    "demonyms": {
+        "eng": {
+            "f": "German",
+            "m": "German"
+        },
+        "fra": {
+            "f": "Allemande",
+            "m": "Allemand"
+        }
+    },
+    "languages": {
+        "deu": "German"
+    }        
+}
+]'
+            );
 
         $countries = $this->countryRepository->getByName('germany');
 
         $this->assertNotEmpty($countries);
 
         foreach ($countries as $country) {
+            /** @var Country $country */
             $this->assertInstanceOf(Country::class, $country);
             $this->assertEquals('Germany', $country->getName()->getCommon());
             $this->assertEquals('Federal Republic of Germany', $country->getName()->getOfficial());
@@ -295,24 +493,63 @@ class CountryRepositoryTest extends TestCase
 
     public function testGetCountriesByRegion()
     {
-        $this->client->expects($this->once())
+        $this->client
+            ->expects($this->once())
             ->method('request')
-            ->with('GET', 'region/europe')
-            ->willReturn($this->response);
+            ->with(...['GET', 'region/europe'])
+            ->willReturn($this->client);
 
-        $this->response->expects($this->once())
-            ->method('getBody')
-            ->willReturn($this->stream);
-
-        $this->stream->expects($this->once())
-            ->method('getContents')
-            ->willReturn(Response::byRegion());
+        $this->client
+            ->expects($this->once())
+            ->method('getData')
+            ->willReturn('[
+{
+    "name": {
+        "common": "Germany",
+        "official": "Federal Republic of Germany",
+        "nativeName": {
+            "deu": {
+                "official": "Bundesrepublik Deutschland",
+                "common": "Deutschland"
+            }
+        }
+    },
+    "cca2": "DE",
+    "cca3": "DEU",
+    "ccn3": "276",
+    "capital": [
+        "Berlin"
+    ],
+    "currencies": { 
+        "EUR": {
+            "name": "Euro",
+            "symbol": "€"   
+        }
+    },
+    "demonyms": {
+        "eng": {
+            "f": "German",
+            "m": "German"
+        },
+        "fra": {
+            "f": "Allemande",
+            "m": "Allemand"
+        }
+    },
+    "languages": {
+        "deu": "German"
+    },
+    "region": "Europe"       
+}
+]'
+            );
 
         $countries = $this->countryRepository->getByRegion('europe');
 
         $this->assertNotEmpty($countries);
 
         foreach ($countries as $country) {
+            /** @var Country $country */
             $this->assertInstanceOf(Country::class, $country);
             $this->assertEquals('Europe', $country->getRegion());
         }
@@ -320,24 +557,64 @@ class CountryRepositoryTest extends TestCase
 
     public function testGetCountriesBySubregion()
     {
-        $this->client->expects($this->once())
+        $this->client
+            ->expects($this->once())
             ->method('request')
-            ->with('GET', 'subregion/Western Europe')
-            ->willReturn($this->response);
+            ->with(...['GET', 'subregion/Western Europe'])
+            ->willReturn($this->client);
 
-        $this->response->expects($this->once())
-            ->method('getBody')
-            ->willReturn($this->stream);
-
-        $this->stream->expects($this->once())
-            ->method('getContents')
-            ->willReturn(Response::bySubregion());
+        $this->client
+            ->expects($this->once())
+            ->method('getData')
+            ->willReturn('[
+{
+    "name": {
+        "common": "Germany",
+        "official": "Federal Republic of Germany",
+        "nativeName": {
+            "deu": {
+                "official": "Bundesrepublik Deutschland",
+                "common": "Deutschland"
+            }
+        }
+    },
+    "cca2": "DE",
+    "cca3": "DEU",
+    "ccn3": "276",
+    "capital": [
+        "Berlin"
+    ],
+    "currencies": { 
+        "EUR": {
+            "name": "Euro",
+            "symbol": "€"   
+        }
+    },
+    "demonyms": {
+        "eng": {
+            "f": "German",
+            "m": "German"
+        },
+        "fra": {
+            "f": "Allemande",
+            "m": "Allemand"
+        }
+    },
+    "languages": {
+        "deu": "German"
+    },
+    "region": "Europe",
+    "subregion": "Western Europe"
+}
+]'
+            );
 
         $countries = $this->countryRepository->getBySubregion('Western Europe');
 
         $this->assertNotEmpty($countries);
 
         foreach ($countries as $country) {
+            /** @var Country $country */
             $this->assertInstanceOf(Country::class, $country);
             $this->assertEquals('Western Europe', $country->getSubregion());
         }
@@ -345,28 +622,79 @@ class CountryRepositoryTest extends TestCase
 
     public function testGetCountriesByTranslation()
     {
-        $this->client->expects($this->once())
+        $this->client
+            ->expects($this->once())
             ->method('request')
-            ->with('GET', 'translation/germany')
-            ->willReturn($this->response);
+            ->with(...['GET', 'translation/germany'])
+            ->willReturn($this->client);
 
-        $this->response->expects($this->once())
-            ->method('getBody')
-            ->willReturn($this->stream);
-
-        $this->stream->expects($this->once())
-            ->method('getContents')
-            ->willReturn(Response::byTranslation());
+        $this->client
+            ->expects($this->once())
+            ->method('getData')
+            ->willReturn('[
+{
+    "name": {
+        "common": "Germany",
+        "official": "Federal Republic of Germany",
+        "nativeName": {
+            "deu": {
+                "official": "Bundesrepublik Deutschland",
+                "common": "Deutschland"
+            }
+        }
+    },
+    "cca2": "DE",
+    "cca3": "DEU",
+    "ccn3": "276",
+    "capital": [
+        "Berlin"
+    ],
+    "currencies": { 
+        "EUR": {
+            "name": "Euro",
+            "symbol": "€"   
+        }
+    },
+    "demonyms": {
+        "eng": {
+            "f": "German",
+            "m": "German"
+        },
+        "fra": {
+            "f": "Allemande",
+            "m": "Allemand"
+        }
+    },
+    "languages": {
+        "deu": "German"
+    },
+    "region": "Europe",
+    "subregion": "Western Europe",
+    "translations": {
+        "per": {
+            "official": "جمهوری فدرال آلمان",
+            "common": "آلمان"
+        },
+        "ita": {
+            "official": "Repubblica federale di Germania",
+            "common": "Germania"
+        }
+    }
+}
+]'
+            );
 
         $countries = $this->countryRepository->getByTranslation('germany');
 
         $this->assertNotEmpty($countries);
 
         foreach ($countries as $country) {
+            /** @var Country $country */
             $this->assertInstanceOf(Country::class, $country);
             $this->assertEquals('Germany', $country->getName()->getCommon());
             $this->assertEquals('Federal Republic of Germany', $country->getName()->getOfficial());
             $this->assertEquals('Berlin', $country->getCapital()[0]);
+            $this->assertCount(2, $country->getTranslations());
         }
     }
 }

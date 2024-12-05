@@ -12,22 +12,22 @@ use Symfony\Component\Cache\Adapter\AbstractAdapter;
 class Client
 {
     /** @var ClientInterface */
-    protected $http;
+    private $http;
 
     /** @var string */
-    protected $data;
+    private $data;
 
     /** @var AbstractAdapter */
-    protected $cacheAdapter;
+    private $cacheAdapter;
 
     /** @var bool */
-    protected $isCachable = false;
+    private $isCachable = false;
 
     /** @var int */
-    protected $cacheTTL = 3600;
+    private $cacheTTL = 3600;
 
     /** @var ResponseInterface */
-    protected $response;
+    private $response;
 
     public function __construct(ClientInterface $http)
     {
