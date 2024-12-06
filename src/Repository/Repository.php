@@ -24,15 +24,6 @@ abstract class Repository
     }
 
     /**
-     * @param mixed $data
-     * @return string
-     */
-    protected function serialize($data): string
-    {
-        return $this->serializer->serialize($data, 'json');
-    }
-
-    /**
      * @param string $data
      * @param string $class
      * @return object|array
