@@ -41,7 +41,7 @@ class Client
 
     public function getData(): string
     {
-        return $this->data;
+        return $this->data ?? '';
     }
 
     public function setCacheAdapter(AbstractAdapter $cacheAdapter): self
