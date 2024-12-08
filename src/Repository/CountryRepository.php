@@ -22,19 +22,14 @@ class CountryRepository implements RepositoryInterface
     /** @var AdapterInterface|null */
     private $cache;
 
-    /** @var int */
-    private $ttl;
-
     public function __construct(
         ClientInterface $client,
         SerializerInterface $serializer,
-        AdapterInterface $cache = null,
-        int $ttl = 3600
+        AdapterInterface $cache = null
     ) {
         $this->client = $client;
         $this->serializer = $serializer;
         $this->cache = $cache;
-        $this->ttl = $ttl;
     }
 
     private function fetchData(string $uri): array
@@ -54,7 +49,7 @@ class CountryRepository implements RepositoryInterface
         }
         
         if ($this->cache) {
-            $cacheItem->set($data)->expiresAfter($this->ttl);
+            $cacheItem->set($data);
             $this->cache->save($cacheItem);
         }
 
