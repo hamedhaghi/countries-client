@@ -17,7 +17,6 @@ use Hamed\Countries\Model\Name;
 use Hamed\Countries\Model\NativeName;
 use Hamed\Countries\Model\Translation;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
 class CountryNormalizer implements DenormalizerInterface
 {
@@ -26,7 +25,7 @@ class CountryNormalizer implements DenormalizerInterface
     {
         return $type === Country::class;
     }
-    
+
     public function denormalize($data, $type, $format = null, array $context = []): Country
     {
         $nativeNames = [];
