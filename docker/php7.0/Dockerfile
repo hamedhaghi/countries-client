@@ -1,11 +1,15 @@
 FROM php:7.0-cli-alpine
 
-# Install dependencies (bash, curl, git, and unzip)
+# Install dependencies (bash, curl, git, unzip, and autoconf)
 RUN apk update && apk add --no-cache \
     bash \
     curl \
     git \
     unzip \
+    autoconf \
+    make \
+    gcc \
+    g++ \
     libzip-dev \
     && rm -rf /var/cache/apk/*
 
@@ -13,10 +17,16 @@ RUN apk update && apk add --no-cache \
 RUN curl -sS https://getcomposer.org/installer | php \
     && mv composer.phar /usr/local/bin/composer
 
+# Install PHP extensions
+RUN pecl install xdebug-2.5.5 \
+    && docker-php-ext-enable xdebug \
+    && echo "xdebug.coverage_enable=1" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo "xdebug.mode=coverage" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+
 # Set working directory
 WORKDIR /app
 
-# Add Composer's global bin to PATH (use correct location for PHP Alpine image)
+# Add Composer's global bin to PATH
 ENV PATH="/root/.composer/vendor/bin:${PATH}"
 
 # Run the command
