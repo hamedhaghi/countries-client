@@ -35,7 +35,7 @@ class CountryRepository implements RepositoryInterface
     private function fetchData(string $uri): array
     {
         if ($this->cache) {
-            $cacheItem = $this->cache->getItem($uri);
+            $cacheItem = $this->cache->getItem(md5($uri));
             if ($cacheItem->isHit()) {
                 return $this->serializer->deserialize($cacheItem->get(), Country::class . '[]', 'json');
             }

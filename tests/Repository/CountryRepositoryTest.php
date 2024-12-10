@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Hamed\Countries\Tests\Repository;
 
+use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 use Hamed\Countries\Model\Country;
@@ -14,8 +15,10 @@ use Hamed\Countries\Normalizer\CountryNormalizer;
 use Hamed\Countries\Repository\CountryRepository;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Cache\CacheItemInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
+use RuntimeException;
 use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
@@ -37,6 +40,9 @@ class CountryRepositoryTest extends TestCase
     /** @var AdapterInterface|MockObject */
     protected $cache;
 
+    /** @var CacheItemInterface|MockObject */
+    protected $cacheItem;
+
     /** @var SerializerInterface */
     protected $serializer;
 
@@ -48,6 +54,7 @@ class CountryRepositoryTest extends TestCase
         $this->stream = $this->createMock(StreamInterface::class);
         $this->response->method('getBody')->willReturn($this->stream);
         $this->cache = $this->createMock(AdapterInterface::class);
+        $this->cacheItem = $this->createMock(CacheItemInterface::class);
         $this->serializer = new Serializer([
             new CountryNormalizer(),
             new ObjectNormalizer(),
@@ -55,6 +62,20 @@ class CountryRepositoryTest extends TestCase
         ], [
             new JsonEncoder(),
         ]);
+    }
+
+    public function testGetAllCountriesWithoutCacheWillThrowRuntimeException()
+    {
+        $this->client
+            ->expects($this->once())
+            ->method('request')
+            ->with(...['GET', 'all'])
+            ->willThrowException(new RuntimeException('Failed to fetch data from API'));
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Failed to fetch data from API');
+
+        (new CountryRepository($this->client, $this->serializer))->getAll();
     }
 
     public function testGetAllCountriesWithoutCache()
@@ -71,6 +92,65 @@ class CountryRepositoryTest extends TestCase
             ->willReturn('[{"name":{"common":"South Georgia","official":"South Georgia and the South Sandwich Islands","nativeName":{"eng":{"official":"South Georgia and the South Sandwich Islands","common":"South Georgia"}}}},{"name":{"common":"Grenada","official":"Grenada","nativeName":{"eng":{"official":"Grenada","common":"Grenada"}}}}]');
 
         $repository = new CountryRepository($this->client, $this->serializer);
+
+        $this->assertNotEmpty($repository->getAll());
+    }
+
+    public function testGetAllCountriesWithoutCacheAndSetCacheInEveryRequest()
+    {
+        $this->cache->expects($this->once())
+        ->method('getItem')
+        ->with(...['all'])
+        ->willReturn($this->cacheItem);
+
+        $this->cacheItem->expects($this->once())
+        ->method('isHit')
+        ->willReturn(false);
+
+        $this->client
+            ->expects($this->once())
+            ->method('request')
+            ->with(...['GET', 'all'])
+            ->willReturn($this->response);
+
+        $data = '[{"name":{"common":"South Georgia","official":"South Georgia and the South Sandwich Islands","nativeName":{"eng":{"official":"South Georgia and the South Sandwich Islands","common":"South Georgia"}}}},{"name":{"common":"Grenada","official":"Grenada","nativeName":{"eng":{"official":"Grenada","common":"Grenada"}}}}]';
+
+        $this->stream
+            ->expects($this->once())
+            ->method('getContents')
+            ->willReturn($data);
+        
+        $this->cacheItem->expects($this->once())
+        ->method('set')
+        ->with(...[$data])
+        ->willReturn($this->cacheItem);
+
+        $this->cache->expects($this->once())
+        ->method('save')
+        ->willReturn(true);
+
+        $repository = new CountryRepository($this->client, $this->serializer, $this->cache);
+
+        $this->assertNotEmpty($repository->getAll());
+        
+    }
+
+    public function testGetAllCountriesWithCache()
+    {
+        $this->cache->expects($this->once())
+        ->method('getItem')
+        ->with(...['all'])
+        ->willReturn($this->cacheItem);
+    
+        $this->cacheItem->expects($this->once())
+        ->method('isHit')
+        ->willReturn(true);
+
+        $this->cacheItem->expects($this->once())
+        ->method('get')
+        ->willReturn('[{"name":{"common":"South Georgia","official":"South Georgia and the South Sandwich Islands","nativeName":{"eng":{"official":"South Georgia and the South Sandwich Islands","common":"South Georgia"}}}},{"name":{"common":"Grenada","official":"Grenada","nativeName":{"eng":{"official":"Grenada","common":"Grenada"}}}}]');
+
+        $repository = new CountryRepository($this->client, $this->serializer, $this->cache);
 
         $this->assertNotEmpty($repository->getAll());
     }
