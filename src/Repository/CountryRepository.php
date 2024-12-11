@@ -32,7 +32,12 @@ class CountryRepository implements RepositoryInterface
         $this->cache = $cache;
     }
 
-    private function fetchData(string $uri): array
+    /**
+     * @param string $uri
+     * @return array|object
+     * @throws RuntimeException
+     */
+    private function fetchData(string $uri)
     {
         if ($this->cache) {
             $cacheItem = $this->cache->getItem(md5($uri));
@@ -47,7 +52,7 @@ class CountryRepository implements RepositoryInterface
         } catch (Exception $e) {
             throw new RuntimeException('Failed to fetch data from API: ' . $e->getMessage());
         }
-        
+
         if ($this->cache) {
             $cacheItem->set($data);
             $this->cache->save($cacheItem);
@@ -56,56 +61,132 @@ class CountryRepository implements RepositoryInterface
         return $this->serializer->deserialize($data, Country::class . '[]', 'json');
     }
 
+    /**
+     * Get all countries
+     * 
+     * @return array
+     * @throws RuntimeException
+     */
     public function getAll(): array
     {
         return $this->fetchData('all');
     }
 
+    /**
+     * Get countries by capital
+     * 
+     * @param string $capital
+     * @return array
+     * @throws RuntimeException
+     */
     public function getByCapital(string $capital): array
     {
         return $this->fetchData('capital/' . $capital);
     }
 
+    /**
+     * Get countries by code
+     * 
+     * @param string $code
+     * @return array
+     * @throws RuntimeException
+     */
     public function getByCode(string $code): array
     {
         return $this->fetchData('alpha/' . $code);
     }
 
+    /**
+     * Get countries by currency
+     * 
+     * @param string $currency
+     * @return array
+     * @throws RuntimeException
+     */
     public function getByCurrency(string $currency): array
     {
         return $this->fetchData('currency/' . $currency);
     }
 
+    /**
+     * Get countries by demonym
+     * 
+     * @param string $demonym
+     * @return array
+     * @throws RuntimeException
+     */
     public function getByDemonym(string $demonym): array
     {
         return $this->fetchData('demonym/' . $demonym);
     }
 
+    /**
+     * Get countries by full name
+     * 
+     * @param string $name
+     * @return array
+     * @throws RuntimeException
+     */
     public function getByFullName(string $name): array
     {
         return $this->fetchData('name/' . $name . '?fullText=true');
     }
 
+    /**
+     * Get countries by language
+     * 
+     * @param string $language
+     * @return array
+     * @throws RuntimeException
+     */
     public function getByLanguage(string $language): array
     {
         return $this->fetchData('lang/' . $language);
     }
 
+    /**
+     * Get countries by name
+     * 
+     * @param string $name
+     * @return array
+     * @throws RuntimeException
+     */
     public function getByName(string $name): array
     {
         return $this->fetchData('name/' . $name);
     }
 
+    /**
+     * Get countries by region
+     * 
+     * @param string $region
+     * @return array
+     * @throws RuntimeException
+     */
     public function getByRegion(string $region): array
     {
         return $this->fetchData('region/' . $region);
     }
 
+    /**
+     * Get countries by subregion
+     * 
+     * @param string $subregion
+     * @return array
+     * @throws RuntimeException
+     */
     public function getBySubregion(string $subregion): array
     {
         return $this->fetchData('subregion/' . $subregion);
     }
 
+    /**
+     * Get countries by translation
+     * 
+     * @param string $translation
+     * @return array
+     * @throws RuntimeException
+     */
     public function getByTranslation(string $translation): array
     {
         return $this->fetchData('translation/' . $translation);

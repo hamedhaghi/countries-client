@@ -4,3 +4,4 @@
 .DS_Store
 var
 tests/coverage
+.php_cs.cache

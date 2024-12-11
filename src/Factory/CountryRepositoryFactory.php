@@ -15,14 +15,66 @@ use Symfony\Component\Serializer\Serializer;
 
 class CountryRepositoryFactory
 {
-    public static function init(
-        bool $fromCache = false,
-        int $cacheTTL = 0,
-        string $uri = 'https://restcountries.com/v3.1/'
-    ): CountryRepository {
+    /** @var string */
+    private $uri = 'https://restcountries.com/v3.1/';
+
+    /** @var bool */
+    private $isCachable = false;
+
+    /** @var int */
+    private $cacheTTL = 0;
+
+    /** @var AdapterInterface|null */
+    private $cache = null;
+
+    /**
+     * Set URI.  The default is https://restcountries.com/v3.1/
+     * 
+     * @param string $uri
+     * @return self
+     */
+    public function setURI(string $uri): self
+    {
+        if (!trim($uri)) {
+            return $this;
+        }
+        $this->uri = $uri;
+        return $this;
+    }
+
+    /**
+     * Enable caching.  The default is false
+     * 
+     * @return self
+     */
+    public function isCachable(): self
+    {
+        $this->isCachable = true;
+        return $this;
+    }
+
+    /**
+     * Set cache TTL in seconds.  The default is 0 which means unlimited
+     * 
+     * @param int $cacheTTL
+     * @return self
+     */
+    public function setCacheTTL(int $cacheTTL): self
+    {
+        $this->cacheTTL = $cacheTTL;
+        return $this;
+    }
+
+    /**
+     * Initialize the repository
+     * 
+     * @return CountryRepository
+     */
+    public function init(): CountryRepository
+    {
 
         $client = new Client([
-            'base_uri' => $uri,
+            'base_uri' => $this->uri,
             'headers' => [
                 'Accept' => 'application/json',
                 'Accept-Encoding' => 'gzip, deflate',
@@ -38,12 +90,10 @@ class CountryRepositoryFactory
             new JsonEncoder(),
         ]);
 
-        $cache = null;
-
-        if ($fromCache) {
-            $cache = new FilesystemAdapter(
+        if ($this->isCachable) {
+            $this->cache = new FilesystemAdapter(
                 'countries',
-                $cacheTTL,
+                $this->cacheTTL,
                 __DIR__ . '/../../var/cache'
             );
         }
@@ -51,7 +101,21 @@ class CountryRepositoryFactory
         return new CountryRepository(
             $client,
             $serializer,
-            $cache
+            $this->cache
         );
+    }
+
+    /**
+     * Clear all cached data
+     * 
+     * @return bool
+     */
+    public function clearCache(): bool
+    {
+        if ($this->cache) {
+            return $this->cache->clear();
+        }
+
+        return false;
     }
 }

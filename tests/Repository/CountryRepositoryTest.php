@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Hamed\Countries\Tests\Repository;
 
-use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 use Hamed\Countries\Model\Country;
@@ -100,7 +99,7 @@ class CountryRepositoryTest extends TestCase
     {
         $this->cache->expects($this->once())
         ->method('getItem')
-        ->with(...['all'])
+        ->with(...[md5('all')])
         ->willReturn($this->cacheItem);
 
         $this->cacheItem->expects($this->once())
@@ -139,7 +138,7 @@ class CountryRepositoryTest extends TestCase
     {
         $this->cache->expects($this->once())
         ->method('getItem')
-        ->with(...['all'])
+        ->with(...[md5('all')])
         ->willReturn($this->cacheItem);
     
         $this->cacheItem->expects($this->once())
