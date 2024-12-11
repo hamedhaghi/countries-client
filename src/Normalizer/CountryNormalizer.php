@@ -20,10 +20,9 @@ use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 
 class CountryNormalizer implements DenormalizerInterface
 {
-
     public function supportsDenormalization($data, $type, $format = null)
     {
-        return $type === Country::class;
+        return Country::class === $type;
     }
 
     public function denormalize($data, $type, $format = null, array $context = []): Country
@@ -98,7 +97,7 @@ class CountryNormalizer implements DenormalizerInterface
             $data['capitalInfo']['latlng'] ?? []
         );
 
-        $country = new Country(
+        return new Country(
             $name,
             $data['tld'] ?? [],
             $data['cca2'] ?? '',
@@ -130,7 +129,5 @@ class CountryNormalizer implements DenormalizerInterface
             $data['startOfWeek'] ?? '',
             $capitalInfo
         );
-
-        return $country;
     }
 }

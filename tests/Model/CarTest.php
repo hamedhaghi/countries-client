@@ -7,9 +7,14 @@ namespace Hamed\Countries\Tests\Model;
 use Hamed\Countries\Model\Car;
 use PHPUnit\Framework\TestCase;
 
-class CarTest extends TestCase {
-    
-    public function testCar() {
+/**
+ * @internal
+ * @coversNothing
+ */
+class CarTest extends TestCase
+{
+    public function testCar()
+    {
         $car = new Car(
             ['a', 'b', 'c'],
             'left'
@@ -19,5 +24,4 @@ class CarTest extends TestCase {
         $this->assertEquals('left', $car->getSide());
         $this->assertNotEquals('right', $car->getSide());
     }
-
 }

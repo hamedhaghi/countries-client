@@ -1,12 +1,16 @@
 <?php
 
-declare(strict_types=1);    
+declare(strict_types=1);
 
 namespace Hamed\Countries\Tests\Model;
 
 use Hamed\Countries\Model\Demonym;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @internal
+ * @coversNothing
+ */
 class DemonymTest extends TestCase
 {
     public function testDemonym()

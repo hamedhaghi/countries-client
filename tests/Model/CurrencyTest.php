@@ -7,11 +7,15 @@ namespace Hamed\Countries\Tests\Model;
 use Hamed\Countries\Model\Currency;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @internal
+ * @coversNothing
+ */
 class CurrencyTest extends TestCase
 {
     public function testCurrency()
     {
-        $currency = new Currency( 'Euro', '€');
+        $currency = new Currency('Euro', '€');
         $this->assertInstanceOf(Currency::class, $currency);
         $this->assertEquals('Euro', $currency->getName());
         $this->assertEquals('€', $currency->getSymbol());

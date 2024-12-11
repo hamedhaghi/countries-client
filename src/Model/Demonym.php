@@ -11,11 +11,6 @@ class Demonym
     /** @var string */
     private $m;
 
-    /**
-     * @param string $f
-     * @param string $m
-     * @return void
-     * */
     public function __construct(string $f, string $m)
     {
         $this->f = $f;

@@ -24,14 +24,11 @@ class CountryRepositoryFactory
     /** @var int */
     private $cacheTTL = 0;
 
-    /** @var AdapterInterface|null */
-    private $cache = null;
+    /** @var null|AdapterInterface */
+    private $cache;
 
     /**
-     * Set URI.  The default is https://restcountries.com/v3.1/
-     * 
-     * @param string $uri
-     * @return self
+     * Set URI.  The default is https://restcountries.com/v3.1/.
      */
     public function setURI(string $uri): self
     {
@@ -39,40 +36,35 @@ class CountryRepositoryFactory
             return $this;
         }
         $this->uri = $uri;
+
         return $this;
     }
 
     /**
-     * Enable caching.  The default is false
-     * 
-     * @return self
+     * Enable caching.  The default is false.
      */
     public function isCachable(): self
     {
         $this->isCachable = true;
+
         return $this;
     }
 
     /**
-     * Set cache TTL in seconds.  The default is 0 which means unlimited
-     * 
-     * @param int $cacheTTL
-     * @return self
+     * Set cache TTL in seconds.  The default is 0 which means unlimited.
      */
     public function setCacheTTL(int $cacheTTL): self
     {
         $this->cacheTTL = $cacheTTL;
+
         return $this;
     }
 
     /**
-     * Initialize the repository
-     * 
-     * @return CountryRepository
+     * Initialize the repository.
      */
     public function init(): CountryRepository
     {
-
         $client = new Client([
             'base_uri' => $this->uri,
             'headers' => [
@@ -94,7 +86,7 @@ class CountryRepositoryFactory
             $this->cache = new FilesystemAdapter(
                 'countries',
                 $this->cacheTTL,
-                __DIR__ . '/../../var/cache'
+                __DIR__.'/../../var/cache'
             );
         }
 
@@ -106,9 +98,7 @@ class CountryRepositoryFactory
     }
 
     /**
-     * Clear all cached data
-     * 
-     * @return bool
+     * Clear all cached data.
      */
     public function clearCache(): bool
     {

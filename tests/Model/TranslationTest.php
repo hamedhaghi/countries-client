@@ -7,6 +7,10 @@ namespace Hamed\Countries\Tests\Model;
 use Hamed\Countries\Model\Translation;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @internal
+ * @coversNothing
+ */
 class TranslationTest extends TestCase
 {
     public function testTranslation()
@@ -17,5 +21,5 @@ class TranslationTest extends TestCase
         $this->assertEquals('Deautschland', $translation->getCommon());
         $this->assertEquals('Deutschland', $translation->getOfficial());
         $this->assertNotEquals('UK', $translation->getCommon());
-    }    
+    }
 }

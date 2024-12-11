@@ -6,7 +6,6 @@ namespace Hamed\Countries\Model;
 
 class IDD
 {
-
     /** @var string */
     private $root;
 
@@ -14,9 +13,7 @@ class IDD
     private $suffixes;
 
     /**
-     * @param string $root
      * @param array<int,string> $suffixes
-     * @return void
      */
     public function __construct(string $root, array $suffixes)
     {
@@ -24,9 +21,6 @@ class IDD
         $this->suffixes = $suffixes;
     }
 
-    /**
-     * @return string   
-     */
     public function getRoot(): string
     {
         return $this->root;

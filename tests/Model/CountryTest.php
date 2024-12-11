@@ -18,6 +18,10 @@ use Hamed\Countries\Model\Translation;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
+/**
+ * @internal
+ * @coversNothing
+ */
 class CountryTest extends TestCase
 {
     public function testCountry()
@@ -44,7 +48,7 @@ class CountryTest extends TestCase
                 'EUR' => [
                     'name' => 'Euro',
                     'symbol' => '€',
-                ]
+                ],
             ],
             new IDD('+49', []),
             ['Berlin'],
@@ -58,7 +62,7 @@ class CountryTest extends TestCase
                 'ita' => new Translation(
                     'Repubblica federale di Germania',
                     'Germania'
-                )
+                ),
             ],
             [49, 49],
             false,
@@ -74,7 +78,7 @@ class CountryTest extends TestCase
             ['UTC+01:00'],
             ['Europe'],
             new Flag('flag', 'png', 'alt'),
-            new stdClass,
+            new stdClass(),
             'monday',
             new CapitalInfo([1.22, 2.34, 53.00, 7])
         );
@@ -98,7 +102,7 @@ class CountryTest extends TestCase
         $this->assertTrue($country->getIndependent());
         $this->assertEquals('status', $country->getStatus());
         $this->assertTrue($country->getUnMember());
-        $this->assertNotEmpty( $country->getCurrencies());
+        $this->assertNotEmpty($country->getCurrencies());
         $this->assertEquals('flag', $country->getFlag());
         $this->assertNotEmpty($country->getLatlng());
         $this->assertInstanceOf(IDD::class, $country->getIdd());
@@ -112,6 +116,5 @@ class CountryTest extends TestCase
         $this->assertInstanceOf(Demonym::class, $country->getDemonyms()['m']);
         $this->assertInstanceOf(Car::class, $country->getCar());
         $this->assertInstanceOf(CapitalInfo::class, $country->getCapitalInfo());
-        
     }
 }

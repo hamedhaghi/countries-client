@@ -14,8 +14,6 @@ class Car
 
     /**
      * @param array<int,string> $signs
-     * @param string $side
-     * @return void
      * */
     public function __construct(array $signs, string $side)
     {
@@ -31,9 +29,6 @@ class Car
         return $this->signs;
     }
 
-    /**
-     * @return string
-     * */
     public function getSide(): string
     {
         return $this->side;

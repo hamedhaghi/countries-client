@@ -7,7 +7,10 @@ namespace Hamed\Countries\Tests\Model;
 use Hamed\Countries\Model\CapitalInfo;
 use PHPUnit\Framework\TestCase;
 
-
+/**
+ * @internal
+ * @coversNothing
+ */
 class CapitalInfoTest extends TestCase
 {
     public function testCapitalInfo()
@@ -21,4 +24,4 @@ class CapitalInfoTest extends TestCase
         $this->assertCount(4, $captialInfo->getLatlng());
         $this->assertNotCount(3, $captialInfo->getLatlng());
     }
-} 
+}

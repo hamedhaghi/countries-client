@@ -25,15 +25,19 @@ use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\SerializerInterface;
 
+/**
+ * @internal
+ * @coversNothing
+ */
 class CountryRepositoryTest extends TestCase
 {
     /** @var ClientInterface|MockObject */
     protected $client;
 
-    /** @var ResponseInterface|MockObject */
+    /** @var MockObject|ResponseInterface */
     protected $response;
 
-    /** @var StreamInterface|MockObject */
+    /** @var MockObject|StreamInterface */
     protected $stream;
 
     /** @var AdapterInterface|MockObject */
@@ -44,7 +48,6 @@ class CountryRepositoryTest extends TestCase
 
     /** @var SerializerInterface */
     protected $serializer;
-
 
     protected function setUp()
     {
@@ -69,7 +72,8 @@ class CountryRepositoryTest extends TestCase
             ->expects($this->once())
             ->method('request')
             ->with(...['GET', 'all'])
-            ->willThrowException(new RuntimeException('Failed to fetch data from API'));
+            ->willThrowException(new RuntimeException('Failed to fetch data from API'))
+        ;
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Failed to fetch data from API');
@@ -83,12 +87,14 @@ class CountryRepositoryTest extends TestCase
             ->expects($this->once())
             ->method('request')
             ->with(...['GET', 'all'])
-            ->willReturn($this->response);
+            ->willReturn($this->response)
+        ;
 
         $this->stream
             ->expects($this->once())
             ->method('getContents')
-            ->willReturn('[{"name":{"common":"South Georgia","official":"South Georgia and the South Sandwich Islands","nativeName":{"eng":{"official":"South Georgia and the South Sandwich Islands","common":"South Georgia"}}}},{"name":{"common":"Grenada","official":"Grenada","nativeName":{"eng":{"official":"Grenada","common":"Grenada"}}}}]');
+            ->willReturn('[{"name":{"common":"South Georgia","official":"South Georgia and the South Sandwich Islands","nativeName":{"eng":{"official":"South Georgia and the South Sandwich Islands","common":"South Georgia"}}}},{"name":{"common":"Grenada","official":"Grenada","nativeName":{"eng":{"official":"Grenada","common":"Grenada"}}}}]')
+        ;
 
         $repository = new CountryRepository($this->client, $this->serializer);
 
@@ -98,56 +104,64 @@ class CountryRepositoryTest extends TestCase
     public function testGetAllCountriesWithoutCacheAndSetCacheInEveryRequest()
     {
         $this->cache->expects($this->once())
-        ->method('getItem')
-        ->with(...[md5('all')])
-        ->willReturn($this->cacheItem);
+            ->method('getItem')
+            ->with(...[md5('all')])
+            ->willReturn($this->cacheItem)
+        ;
 
         $this->cacheItem->expects($this->once())
-        ->method('isHit')
-        ->willReturn(false);
+            ->method('isHit')
+            ->willReturn(false)
+        ;
 
         $this->client
             ->expects($this->once())
             ->method('request')
             ->with(...['GET', 'all'])
-            ->willReturn($this->response);
+            ->willReturn($this->response)
+        ;
 
         $data = '[{"name":{"common":"South Georgia","official":"South Georgia and the South Sandwich Islands","nativeName":{"eng":{"official":"South Georgia and the South Sandwich Islands","common":"South Georgia"}}}},{"name":{"common":"Grenada","official":"Grenada","nativeName":{"eng":{"official":"Grenada","common":"Grenada"}}}}]';
 
         $this->stream
             ->expects($this->once())
             ->method('getContents')
-            ->willReturn($data);
-        
+            ->willReturn($data)
+        ;
+
         $this->cacheItem->expects($this->once())
-        ->method('set')
-        ->with(...[$data])
-        ->willReturn($this->cacheItem);
+            ->method('set')
+            ->with(...[$data])
+            ->willReturn($this->cacheItem)
+        ;
 
         $this->cache->expects($this->once())
-        ->method('save')
-        ->willReturn(true);
+            ->method('save')
+            ->willReturn(true)
+        ;
 
         $repository = new CountryRepository($this->client, $this->serializer, $this->cache);
 
         $this->assertNotEmpty($repository->getAll());
-        
     }
 
     public function testGetAllCountriesWithCache()
     {
         $this->cache->expects($this->once())
-        ->method('getItem')
-        ->with(...[md5('all')])
-        ->willReturn($this->cacheItem);
-    
-        $this->cacheItem->expects($this->once())
-        ->method('isHit')
-        ->willReturn(true);
+            ->method('getItem')
+            ->with(...[md5('all')])
+            ->willReturn($this->cacheItem)
+        ;
 
         $this->cacheItem->expects($this->once())
-        ->method('get')
-        ->willReturn('[{"name":{"common":"South Georgia","official":"South Georgia and the South Sandwich Islands","nativeName":{"eng":{"official":"South Georgia and the South Sandwich Islands","common":"South Georgia"}}}},{"name":{"common":"Grenada","official":"Grenada","nativeName":{"eng":{"official":"Grenada","common":"Grenada"}}}}]');
+            ->method('isHit')
+            ->willReturn(true)
+        ;
+
+        $this->cacheItem->expects($this->once())
+            ->method('get')
+            ->willReturn('[{"name":{"common":"South Georgia","official":"South Georgia and the South Sandwich Islands","nativeName":{"eng":{"official":"South Georgia and the South Sandwich Islands","common":"South Georgia"}}}},{"name":{"common":"Grenada","official":"Grenada","nativeName":{"eng":{"official":"Grenada","common":"Grenada"}}}}]')
+        ;
 
         $repository = new CountryRepository($this->client, $this->serializer, $this->cache);
 
@@ -160,12 +174,14 @@ class CountryRepositoryTest extends TestCase
             ->expects($this->once())
             ->method('request')
             ->with(...['GET', 'capital/berlin'])
-            ->willReturn($this->response);
+            ->willReturn($this->response)
+        ;
 
         $this->stream
             ->expects($this->once())
             ->method('getContents')
-            ->willReturn('[{"name":{"common":"Germany","official":"Federal Republic of Germany","nativeName":{"deu":{"official":"Bundesrepublik Deutschland","common":"Deutschland"}}},"capital":["Berlin"]}]');
+            ->willReturn('[{"name":{"common":"Germany","official":"Federal Republic of Germany","nativeName":{"deu":{"official":"Bundesrepublik Deutschland","common":"Deutschland"}}},"capital":["Berlin"]}]')
+        ;
 
         $repository = new CountryRepository($this->client, $this->serializer);
 
@@ -185,12 +201,14 @@ class CountryRepositoryTest extends TestCase
             ->expects($this->once())
             ->method('request')
             ->with(...['GET', 'alpha/de'])
-            ->willReturn($this->response);
+            ->willReturn($this->response)
+        ;
 
         $this->stream
             ->expects($this->once())
             ->method('getContents')
-            ->willReturn('[{"name":{"common":"Germany","official":"Federal Republic of Germany","nativeName":{"deu":{"official":"Bundesrepublik Deutschland","common":"Deutschland"}}},"cca2":"DE","cca3":"DEU","ccn3":"276","capital":["Berlin"]}]');
+            ->willReturn('[{"name":{"common":"Germany","official":"Federal Republic of Germany","nativeName":{"deu":{"official":"Bundesrepublik Deutschland","common":"Deutschland"}}},"cca2":"DE","cca3":"DEU","ccn3":"276","capital":["Berlin"]}]')
+        ;
 
         $repository = new CountryRepository($this->client, $this->serializer);
 
@@ -212,12 +230,14 @@ class CountryRepositoryTest extends TestCase
             ->expects($this->once())
             ->method('request')
             ->with(...['GET', 'currency/euro'])
-            ->willReturn($this->response);
+            ->willReturn($this->response)
+        ;
 
         $this->stream
             ->expects($this->once())
             ->method('getContents')
-            ->willReturn('[{"name":{"common":"Germany","official":"Federal Republic of Germany","nativeName":{"deu":{"official":"Bundesrepublik Deutschland","common":"Deutschland"}}},"cca2":"DE","cca3":"DEU","ccn3":"276","capital":["Berlin"],"currencies":{"EUR":{"name":"Euro","symbol":"€"}}}]');
+            ->willReturn('[{"name":{"common":"Germany","official":"Federal Republic of Germany","nativeName":{"deu":{"official":"Bundesrepublik Deutschland","common":"Deutschland"}}},"cca2":"DE","cca3":"DEU","ccn3":"276","capital":["Berlin"],"currencies":{"EUR":{"name":"Euro","symbol":"€"}}}]')
+        ;
 
         $repository = new CountryRepository($this->client, $this->serializer);
 
@@ -241,12 +261,14 @@ class CountryRepositoryTest extends TestCase
             ->expects($this->once())
             ->method('request')
             ->with(...['GET', 'demonym/german'])
-            ->willReturn($this->response);
+            ->willReturn($this->response)
+        ;
 
         $this->stream
             ->expects($this->once())
             ->method('getContents')
-            ->willReturn('[{"name":{"common":"Germany","official":"Federal Republic of Germany","nativeName":{"deu":{"official":"Bundesrepublik Deutschland","common":"Deutschland"}}},"cca2":"DE","cca3":"DEU","ccn3":"276","capital":["Berlin"],"currencies":{"EUR":{"name":"Euro","symbol":"€"}},"demonyms":{"eng":{"f":"German","m":"German"},"fra":{"f":"Allemande","m":"Allemand"}}}]');
+            ->willReturn('[{"name":{"common":"Germany","official":"Federal Republic of Germany","nativeName":{"deu":{"official":"Bundesrepublik Deutschland","common":"Deutschland"}}},"cca2":"DE","cca3":"DEU","ccn3":"276","capital":["Berlin"],"currencies":{"EUR":{"name":"Euro","symbol":"€"}},"demonyms":{"eng":{"f":"German","m":"German"},"fra":{"f":"Allemande","m":"Allemand"}}}]')
+        ;
 
         $repository = new CountryRepository($this->client, $this->serializer);
 
@@ -257,12 +279,12 @@ class CountryRepositoryTest extends TestCase
         foreach ($countries as $country) {
             $this->assertInstanceOf(Country::class, $country);
             foreach ($country->getDemonyms() as $key => $demonym) {
-                if ($key === 'eng') {
+                if ('eng' === $key) {
                     $this->assertInstanceOf(Demonym::class, $demonym);
                     $this->assertEquals('German', $demonym->getF());
                     $this->assertEquals('German', $demonym->getM());
                 }
-                if ($key === 'fra') {
+                if ('fra' === $key) {
                     $this->assertInstanceOf(Demonym::class, $demonym);
                     $this->assertEquals('Allemande', $demonym->getF());
                     $this->assertEquals('Allemand', $demonym->getM());
@@ -277,12 +299,14 @@ class CountryRepositoryTest extends TestCase
             ->expects($this->once())
             ->method('request')
             ->with(...['GET', 'name/germany?fullText=true'])
-            ->willReturn($this->response);
+            ->willReturn($this->response)
+        ;
 
         $this->stream
             ->expects($this->once())
             ->method('getContents')
-            ->willReturn('[{"name":{"common":"Germany","official":"Federal Republic of Germany","nativeName":{"deu":{"official":"Bundesrepublik Deutschland","common":"Deutschland"}}},"cca2":"DE","cca3":"DEU","ccn3":"276","capital":["Berlin"],"currencies":{"EUR":{"name":"Euro","symbol":"€"}},"demonyms":{"eng":{"f":"German","m":"German"},"fra":{"f":"Allemande","m":"Allemand"}}}]');
+            ->willReturn('[{"name":{"common":"Germany","official":"Federal Republic of Germany","nativeName":{"deu":{"official":"Bundesrepublik Deutschland","common":"Deutschland"}}},"cca2":"DE","cca3":"DEU","ccn3":"276","capital":["Berlin"],"currencies":{"EUR":{"name":"Euro","symbol":"€"}},"demonyms":{"eng":{"f":"German","m":"German"},"fra":{"f":"Allemande","m":"Allemand"}}}]')
+        ;
 
         $repository = new CountryRepository($this->client, $this->serializer);
 
@@ -304,12 +328,14 @@ class CountryRepositoryTest extends TestCase
             ->expects($this->once())
             ->method('request')
             ->with(...['GET', 'lang/german'])
-            ->willReturn($this->response);
+            ->willReturn($this->response)
+        ;
 
         $this->stream
             ->expects($this->once())
             ->method('getContents')
-            ->willReturn('[{"name":{"common":"Germany","official":"Federal Republic of Germany","nativeName":{"deu":{"official":"Bundesrepublik Deutschland","common":"Deutschland"}}},"cca2":"DE","cca3":"DEU","ccn3":"276","capital":["Berlin"],"currencies":{"EUR":{"name":"Euro","symbol":"€"}},"demonyms":{"eng":{"f":"German","m":"German"},"fra":{"f":"Allemande","m":"Allemand"}},"languages":{"deu":"German"}}]');
+            ->willReturn('[{"name":{"common":"Germany","official":"Federal Republic of Germany","nativeName":{"deu":{"official":"Bundesrepublik Deutschland","common":"Deutschland"}}},"cca2":"DE","cca3":"DEU","ccn3":"276","capital":["Berlin"],"currencies":{"EUR":{"name":"Euro","symbol":"€"}},"demonyms":{"eng":{"f":"German","m":"German"},"fra":{"f":"Allemande","m":"Allemand"}},"languages":{"deu":"German"}}]')
+        ;
 
         $repository = new CountryRepository($this->client, $this->serializer);
 
@@ -333,12 +359,14 @@ class CountryRepositoryTest extends TestCase
             ->expects($this->once())
             ->method('request')
             ->with(...['GET', 'name/germany'])
-            ->willReturn($this->response);
+            ->willReturn($this->response)
+        ;
 
         $this->stream
             ->expects($this->once())
             ->method('getContents')
-            ->willReturn('[{"name":{"common":"Germany","official":"Federal Republic of Germany","nativeName":{"deu":{"official":"Bundesrepublik Deutschland","common":"Deutschland"}}},"cca2":"DE","cca3":"DEU","ccn3":"276","capital":["Berlin"],"currencies":{"EUR":{"name":"Euro","symbol":"€"}},"demonyms":{"eng":{"f":"German","m":"German"},"fra":{"f":"Allemande","m":"Allemand"}},"languages":{"deu":"German"}}]');
+            ->willReturn('[{"name":{"common":"Germany","official":"Federal Republic of Germany","nativeName":{"deu":{"official":"Bundesrepublik Deutschland","common":"Deutschland"}}},"cca2":"DE","cca3":"DEU","ccn3":"276","capital":["Berlin"],"currencies":{"EUR":{"name":"Euro","symbol":"€"}},"demonyms":{"eng":{"f":"German","m":"German"},"fra":{"f":"Allemande","m":"Allemand"}},"languages":{"deu":"German"}}]')
+        ;
 
         $repository = new CountryRepository($this->client, $this->serializer);
 
@@ -360,12 +388,14 @@ class CountryRepositoryTest extends TestCase
             ->expects($this->once())
             ->method('request')
             ->with(...['GET', 'region/europe'])
-            ->willReturn($this->response);
+            ->willReturn($this->response)
+        ;
 
         $this->stream
             ->expects($this->once())
             ->method('getContents')
-            ->willReturn('[{"name":{"common":"Germany","official":"Federal Republic of Germany","nativeName":{"deu":{"official":"Bundesrepublik Deutschland","common":"Deutschland"}}},"cca2":"DE","cca3":"DEU","ccn3":"276","capital":["Berlin"],"currencies":{"EUR":{"name":"Euro","symbol":"€"}},"demonyms":{"eng":{"f":"German","m":"German"},"fra":{"f":"Allemande","m":"Allemand"}},"languages":{"deu":"German"},"region":"Europe"}]');
+            ->willReturn('[{"name":{"common":"Germany","official":"Federal Republic of Germany","nativeName":{"deu":{"official":"Bundesrepublik Deutschland","common":"Deutschland"}}},"cca2":"DE","cca3":"DEU","ccn3":"276","capital":["Berlin"],"currencies":{"EUR":{"name":"Euro","symbol":"€"}},"demonyms":{"eng":{"f":"German","m":"German"},"fra":{"f":"Allemande","m":"Allemand"}},"languages":{"deu":"German"},"region":"Europe"}]')
+        ;
 
         $repository = new CountryRepository($this->client, $this->serializer);
 
@@ -385,12 +415,14 @@ class CountryRepositoryTest extends TestCase
             ->expects($this->once())
             ->method('request')
             ->with(...['GET', 'subregion/Western Europe'])
-            ->willReturn($this->response);
+            ->willReturn($this->response)
+        ;
 
         $this->stream
             ->expects($this->once())
             ->method('getContents')
-            ->willReturn('[{"name":{"common":"Germany","official":"Federal Republic of Germany","nativeName":{"deu":{"official":"Bundesrepublik Deutschland","common":"Deutschland"}}},"cca2":"DE","cca3":"DEU","ccn3":"276","capital":["Berlin"],"currencies":{"EUR":{"name":"Euro","symbol":"€"}},"demonyms":{"eng":{"f":"German","m":"German"},"fra":{"f":"Allemande","m":"Allemand"}},"languages":{"deu":"German"},"region":"Europe","subregion":"Western Europe"}]');
+            ->willReturn('[{"name":{"common":"Germany","official":"Federal Republic of Germany","nativeName":{"deu":{"official":"Bundesrepublik Deutschland","common":"Deutschland"}}},"cca2":"DE","cca3":"DEU","ccn3":"276","capital":["Berlin"],"currencies":{"EUR":{"name":"Euro","symbol":"€"}},"demonyms":{"eng":{"f":"German","m":"German"},"fra":{"f":"Allemande","m":"Allemand"}},"languages":{"deu":"German"},"region":"Europe","subregion":"Western Europe"}]')
+        ;
 
         $repository = new CountryRepository($this->client, $this->serializer);
 
@@ -410,12 +442,14 @@ class CountryRepositoryTest extends TestCase
             ->expects($this->once())
             ->method('request')
             ->with(...['GET', 'translation/germany'])
-            ->willReturn($this->response);
+            ->willReturn($this->response)
+        ;
 
         $this->stream
             ->expects($this->once())
             ->method('getContents')
-            ->willReturn('[{"name":{"common":"Germany","official":"Federal Republic of Germany","nativeName":{"deu":{"official":"Bundesrepublik Deutschland","common":"Deutschland"}}},"cca2":"DE","cca3":"DEU","ccn3":"276","capital":["Berlin"],"currencies":{"EUR":{"name":"Euro","symbol":"€"}},"demonyms":{"eng":{"f":"German","m":"German"},"fra":{"f":"Allemande","m":"Allemand"}},"languages":{"deu":"German"},"region":"Europe","subregion":"Western Europe","translations":{"per":{"official":"جمهوری فدرال آلمان","common":"آلمان"},"ita":{"official":"Repubblica federale di Germania","common":"Germania"}}}]');
+            ->willReturn('[{"name":{"common":"Germany","official":"Federal Republic of Germany","nativeName":{"deu":{"official":"Bundesrepublik Deutschland","common":"Deutschland"}}},"cca2":"DE","cca3":"DEU","ccn3":"276","capital":["Berlin"],"currencies":{"EUR":{"name":"Euro","symbol":"€"}},"demonyms":{"eng":{"f":"German","m":"German"},"fra":{"f":"Allemande","m":"Allemand"}},"languages":{"deu":"German"},"region":"Europe","subregion":"Western Europe","translations":{"per":{"official":"جمهوری فدرال آلمان","common":"آلمان"},"ita":{"official":"Repubblica federale di Germania","common":"Germania"}}}]')
+        ;
 
         $repository = new CountryRepository($this->client, $this->serializer);
 

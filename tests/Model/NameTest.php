@@ -8,6 +8,10 @@ use Hamed\Countries\Model\Name;
 use Hamed\Countries\Model\NativeName;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @internal
+ * @coversNothing
+ */
 class NameTest extends TestCase
 {
     public function testName()
@@ -19,7 +23,7 @@ class NameTest extends TestCase
                 new NativeName(
                     'Bundesrepublik Deutschland',
                     'Deutschland'
-                )
+                ),
             ]
         );
 
@@ -32,5 +36,4 @@ class NameTest extends TestCase
         $this->assertEquals('Deutschland', $name->getNativeName()[0]->getOfficial());
         $this->assertNotEquals('UK', $name->getCommon());
     }
-
 }

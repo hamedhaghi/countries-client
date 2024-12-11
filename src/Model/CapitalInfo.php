@@ -11,7 +11,6 @@ class CapitalInfo
 
     /**
      * @param array<int,float> $latlng
-     * @return void
      */
     public function __construct(array $latlng)
     {

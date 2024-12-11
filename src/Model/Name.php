@@ -16,10 +16,7 @@ class Name
     private $nativeName;
 
     /**
-     * @param string $common
-     * @param string $official
      * @param array<string,NativeName> $nativeName
-     * @return void
      * */
     public function __construct(string $common, string $official, array $nativeName = [])
     {
@@ -28,17 +25,11 @@ class Name
         $this->nativeName = $nativeName;
     }
 
-    /**
-     * @return string   
-     */
     public function getCommon(): string
     {
         return $this->common;
     }
 
-    /**
-     * @return string
-     */
     public function getOfficial(): string
     {
         return $this->official;

@@ -9,10 +9,6 @@ class Language
     /** @var string */
     private $name;
 
-    /**
-     * @param string $name
-     * @return void
-     */
     public function __construct(string $name)
     {
         $this->name = $name;
