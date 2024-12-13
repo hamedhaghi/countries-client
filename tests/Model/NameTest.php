@@ -8,10 +8,6 @@ use Hamed\Countries\Model\Name;
 use Hamed\Countries\Model\NativeName;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @internal
- * @coversNothing
- */
 class NameTest extends TestCase
 {
     public function testName()

@@ -9,10 +9,6 @@ use Hamed\Countries\Repository\CountryRepository;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
-/**
- * @internal
- * @coversNothing
- */
 class CountryRepositoryFactoryTest extends TestCase
 {
     public function testInitWithoutCache()

@@ -7,10 +7,6 @@ namespace Hamed\Countries\Tests\Model;
 use Hamed\Countries\Model\Language;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @internal
- * @coversNothing
- */
 class LanguageTest extends TestCase
 {
     public function testLanguage()

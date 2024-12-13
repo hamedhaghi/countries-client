@@ -7,6 +7,7 @@ namespace Hamed\Countries\Factory;
 use GuzzleHttp\Client;
 use Hamed\Countries\Normalizer\CountryNormalizer;
 use Hamed\Countries\Repository\CountryRepository;
+use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;

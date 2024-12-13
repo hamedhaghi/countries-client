@@ -25,10 +25,6 @@ use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\SerializerInterface;
 
-/**
- * @internal
- * @coversNothing
- */
 class CountryRepositoryTest extends TestCase
 {
     /** @var ClientInterface|MockObject */

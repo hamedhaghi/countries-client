@@ -18,10 +18,6 @@ use Hamed\Countries\Model\Translation;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
-/**
- * @internal
- * @coversNothing
- */
 class CountryTest extends TestCase
 {
     public function testCountry()

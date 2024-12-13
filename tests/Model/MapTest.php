@@ -7,10 +7,6 @@ namespace Hamed\Countries\Tests\Model;
 use Hamed\Countries\Model\Map;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @internal
- * @coversNothing
- */
 class MapTest extends TestCase
 {
     public function testMap()

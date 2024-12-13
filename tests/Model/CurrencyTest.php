@@ -7,10 +7,6 @@ namespace Hamed\Countries\Tests\Model;
 use Hamed\Countries\Model\Currency;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @internal
- * @coversNothing
- */
 class CurrencyTest extends TestCase
 {
     public function testCurrency()

@@ -7,10 +7,6 @@ namespace Hamed\Countries\Tests\Model;
 use Hamed\Countries\Model\Car;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @internal
- * @coversNothing
- */
 class CarTest extends TestCase
 {
     public function testCar()

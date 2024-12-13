@@ -36,8 +36,10 @@ class CountryRepository implements RepositoryInterface
      * Get all countries.
      *
      * @throws RuntimeException
+     *
+     * @return array|object
      */
-    public function getAll(): array
+    public function getAll()
     {
         return $this->fetchData('all');
     }
@@ -47,7 +49,7 @@ class CountryRepository implements RepositoryInterface
      *
      * @throws RuntimeException
      */
-    public function getByCapital(string $capital): array
+    public function getByCapital(string $capital)
     {
         return $this->fetchData('capital/'.$capital);
     }
@@ -57,7 +59,7 @@ class CountryRepository implements RepositoryInterface
      *
      * @throws RuntimeException
      */
-    public function getByCode(string $code): array
+    public function getByCode(string $code)
     {
         return $this->fetchData('alpha/'.$code);
     }
@@ -67,7 +69,7 @@ class CountryRepository implements RepositoryInterface
      *
      * @throws RuntimeException
      */
-    public function getByCurrency(string $currency): array
+    public function getByCurrency(string $currency)
     {
         return $this->fetchData('currency/'.$currency);
     }
@@ -77,7 +79,7 @@ class CountryRepository implements RepositoryInterface
      *
      * @throws RuntimeException
      */
-    public function getByDemonym(string $demonym): array
+    public function getByDemonym(string $demonym)
     {
         return $this->fetchData('demonym/'.$demonym);
     }
@@ -87,7 +89,7 @@ class CountryRepository implements RepositoryInterface
      *
      * @throws RuntimeException
      */
-    public function getByFullName(string $name): array
+    public function getByFullName(string $name)
     {
         return $this->fetchData('name/'.$name.'?fullText=true');
     }
@@ -97,7 +99,7 @@ class CountryRepository implements RepositoryInterface
      *
      * @throws RuntimeException
      */
-    public function getByLanguage(string $language): array
+    public function getByLanguage(string $language)
     {
         return $this->fetchData('lang/'.$language);
     }
@@ -107,7 +109,7 @@ class CountryRepository implements RepositoryInterface
      *
      * @throws RuntimeException
      */
-    public function getByName(string $name): array
+    public function getByName(string $name)
     {
         return $this->fetchData('name/'.$name);
     }
@@ -117,7 +119,7 @@ class CountryRepository implements RepositoryInterface
      *
      * @throws RuntimeException
      */
-    public function getByRegion(string $region): array
+    public function getByRegion(string $region)
     {
         return $this->fetchData('region/'.$region);
     }
@@ -127,7 +129,7 @@ class CountryRepository implements RepositoryInterface
      *
      * @throws RuntimeException
      */
-    public function getBySubregion(string $subregion): array
+    public function getBySubregion(string $subregion)
     {
         return $this->fetchData('subregion/'.$subregion);
     }
@@ -137,7 +139,7 @@ class CountryRepository implements RepositoryInterface
      *
      * @throws RuntimeException
      */
-    public function getByTranslation(string $translation): array
+    public function getByTranslation(string $translation)
     {
         return $this->fetchData('translation/'.$translation);
     }
@@ -149,8 +151,11 @@ class CountryRepository implements RepositoryInterface
      */
     private function fetchData(string $uri)
     {
+        $cacheKey = md5($uri);
+        $cacheItem = null;
+
         if ($this->cache) {
-            $cacheItem = $this->cache->getItem(md5($uri));
+            $cacheItem = $this->cache->getItem($cacheKey);
             if ($cacheItem->isHit()) {
                 return $this->serializer->deserialize($cacheItem->get(), Country::class.'[]', 'json');
             }

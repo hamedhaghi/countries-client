@@ -7,10 +7,6 @@ namespace Hamed\Countries\Tests\Model;
 use Hamed\Countries\Model\IDD;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @internal
- * @coversNothing
- */
 class IDDTest extends TestCase
 {
     public function testIDD()

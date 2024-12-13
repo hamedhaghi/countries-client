@@ -37,7 +37,8 @@
     "scripts": {
         "test": "phpunit",
         "analyze": "phpstan analyse src --level=5",
-        "fix": "php-cs-fixer fix ."
+        "fix": "php-cs-fixer fix .",
+        "coverage": "phpunit --coverage-html tests/coverage"
     },
     "config": {
         "sort-packages": true

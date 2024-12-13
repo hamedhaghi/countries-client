@@ -10,5 +10,7 @@ $finder = (new PhpCsFixer\Finder())->in(
 return (new PhpCsFixer\Config())
     ->setRules([
         '@PSR12' => true,
-        '@PhpCsFixer' => true,
+        'array_indentation' => true,
+        'array_syntax' => ['syntax' => 'short'],
+        'single_quote' => true,
     ])->setFinder($finder);
