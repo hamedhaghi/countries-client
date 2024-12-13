@@ -1,5 +1,5 @@
 {
-    "name": "hamed/countries",
+    "name": "hamedhaghi/countries",
     "description": "A PHP client for the RestCountries API",
     "minimum-stability": "stable",
     "prefer-stable": true,
