@@ -5,8 +5,8 @@ A PHP client for the [RestCountries API](https://restcountries.com/). This packa
 ## Features
 
 - Fetch detailed information about countries.
-- Caching support for improved performance.
-- Easy integration with old and modern PHP projects.
+- Support for caching to improve performance.
+- Compatible with both legacy and modern PHP projects.
 
 ## Requirements
 
@@ -20,7 +20,7 @@ Install the package via Composer:
 composer require hamedhaghi/countries
 ```
 
-### Usage Example
+## Usage Example
 
 ```php
 require 'vendor/autoload.php';
@@ -28,18 +28,37 @@ require 'vendor/autoload.php';
 use Hamed\Countries\Factory;
 
 // Initialize the client
-$repository = (new CountryRepositoryFactory())->init();
+$factory = new CountryRepositoryFactory();
 
-// Output country information
+// Enable caching for faster responses (optional)
+$factory = $factory->isCachable()
+                   ->setCacheTTL(3600); // Cache expiration time in seconds
+
+// Initialize the repository
+$repository = $factory->init();
+
+// Query country data
 $countries = $repository->getAll();
-$countries = $repository->getByCapital('berlin');
+$countries = $repository->getByCapital('Berlin');
 $countries = $repository->getByCode('DE');
-$countries = $repository->getByCurrency('euro');
-$countries = $repository->getByDemonym('german');
-$countries = $repository->getByFullName('germany');
-$countries = $repository->getByLanguage('german');
-$countries = $repository->getByName('germany');
-$countries = $repository->getByRegion('europe');
-$countries = $repository->getBySubregion('western europe');
-$countries = $repository->getByTranslation('germany');
+$countries = $repository->getByCurrency('Euro');
+$countries = $repository->getByDemonym('German');
+$countries = $repository->getByFullName('Germany');
+$countries = $repository->getByLanguage('German');
+$countries = $repository->getByName('Germany');
+$countries = $repository->getByRegion('Europe');
+$countries = $repository->getBySubregion('Western Europe');
+$countries = $repository->getByTranslation('Germany');
+
+// Clear the cache
+$factory->clearCache();
+
 ```
+
+## Contributing
+
+Contributions are welcome! Please fork the repository and submit a pull request with your changes.
+
+## License
+
+This project is licensed under the MIT License.

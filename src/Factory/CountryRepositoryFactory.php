@@ -29,19 +29,6 @@ class CountryRepositoryFactory
     private $cache;
 
     /**
-     * Set URI.  The default is https://restcountries.com/v3.1/.
-     */
-    public function setURI(string $uri): self
-    {
-        if (!trim($uri)) {
-            return $this;
-        }
-        $this->uri = $uri;
-
-        return $this;
-    }
-
-    /**
      * Enable caching.  The default is false.
      */
     public function isCachable(): self

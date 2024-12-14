@@ -7,7 +7,6 @@ namespace Hamed\Countries\Tests\Factory;
 use Hamed\Countries\Factory\CountryRepositoryFactory;
 use Hamed\Countries\Repository\CountryRepository;
 use PHPUnit\Framework\TestCase;
-use RuntimeException;
 
 class CountryRepositoryFactoryTest extends TestCase
 {
@@ -58,24 +57,5 @@ class CountryRepositoryFactoryTest extends TestCase
     {
         $factory = new CountryRepositoryFactory();
         $this->assertFalse($factory->clearCache());
-    }
-
-    public function testSetURI()
-    {
-        $factory = new CountryRepositoryFactory();
-        $this->assertNotEmpty($factory->setURI('https://restcountries.com/v3.1/')->init()->getAll());
-    }
-
-    public function testSetURIException()
-    {
-        $factory = new CountryRepositoryFactory();
-        $this->expectException(RuntimeException::class);
-        $factory->setURI('example.com')->init()->getAll();
-    }
-
-    public function testSetURIEmpty()
-    {
-        $factory = new CountryRepositoryFactory();
-        $this->assertNotEmpty($factory->setURI('')->init()->getAll());
     }
 }
