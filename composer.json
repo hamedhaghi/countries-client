@@ -22,7 +22,7 @@
         }
     },
     "require": {
-        "php": ">=7.0 <8.4",
+        "php": ">=7.0",
         "guzzlehttp/guzzle": "^6.5",
         "symfony/cache": "3.4.*",
         "symfony/property-access": "3.4.*",
