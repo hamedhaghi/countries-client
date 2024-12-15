@@ -25,7 +25,7 @@ class CountryNormalizer implements DenormalizerInterface
         return Country::class === $type;
     }
 
-    public function denormalize($data, $type, $format = null, array $context = []): Country
+    public function denormalize($data, $type, $format = null, array $context = [])
     {
         $nativeNames = [];
         foreach ($data['name']['nativeName'] ?? [] as $key => $nativeName) {
@@ -125,7 +125,7 @@ class CountryNormalizer implements DenormalizerInterface
             $data['timezones'] ?? [],
             $data['continents'] ?? [],
             $flags,
-            $data['coatOfArms'],
+            $data['coatOfArms'] ?? [],
             $data['startOfWeek'] ?? '',
             $capitalInfo
         );
