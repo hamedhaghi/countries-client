@@ -36,7 +36,7 @@
     },
     "scripts": {
         "test": "phpunit",
-        "analyze": "phpstan analyse src --level=5",
+        "analyze": "phpstan analyse src --level=5 --no-progress",
         "fix": "php-cs-fixer fix .",
         "coverage": "phpunit --coverage-html tests/coverage",
         "check": [
