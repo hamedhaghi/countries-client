@@ -1,50 +1,50 @@
 {
-    "name": "hamedhaghi/countries",
-    "description": "A PHP client for the RestCountries API",
-    "minimum-stability": "stable",
-    "prefer-stable": true,
-    "license": "MIT",
-    "type": "library",
-    "authors": [
-        {
-            "name": "Hamed Haghi",
-            "email": "hamedhaghi07@gmail.com"
-        }
-    ],
-    "autoload": {
-        "psr-4": {
-            "Hamed\\Countries\\": "src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Hamed\\Countries\\Tests\\": "tests/"
-        }
-    },
-    "require": {
-        "php": "^7.1",
-        "guzzlehttp/guzzle": "*",
-        "symfony/cache": "*",
-        "symfony/property-access": "*",
-        "symfony/serializer": "*"
-    },
-    "require-dev": {
-        "phpunit/phpunit": "*",
-        "phpstan/phpstan": "*",
-        "friendsofphp/php-cs-fixer": "*"
-    },
-    "scripts": {
-        "test": "phpunit",
-        "analyze": "phpstan analyse src --level=5 --no-progress",
-        "fix": "php-cs-fixer fix .",
-        "coverage": "phpunit --coverage-html tests/coverage",
-        "check": [
-            "@test",
-            "@analyze",
-            "@fix"
-        ]
-    },
-    "config": {
-        "sort-packages": true
+  "name": "hamedhaghi/countries",
+  "description": "A PHP client for the RestCountries API",
+  "minimum-stability": "stable",
+  "prefer-stable": true,
+  "license": "MIT",
+  "type": "library",
+  "authors": [
+    {
+      "name": "Hamed Haghi",
+      "email": "hamedhaghi07@gmail.com"
     }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Hamed\\Countries\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Hamed\\Countries\\Tests\\": "tests/"
+    }
+  },
+  "require": {
+    "php": "^7.1",
+    "guzzlehttp/guzzle": "^6.3",
+    "symfony/cache": "3.4.*",
+    "symfony/property-access": "3.4.*",
+    "symfony/serializer": "3.4.*"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^6.0",
+    "phpstan/phpstan": "^0.9",
+    "friendsofphp/php-cs-fixer": "^2.15"
+  },
+  "scripts": {
+    "test": "phpunit",
+    "analyze": "phpstan analyse src --level=5 --no-progress",
+    "fix": "php-cs-fixer fix .",
+    "coverage": "phpunit --coverage-html tests/coverage",
+    "check": [
+      "@test",
+      "@analyze",
+      "@fix"
+    ]
+  },
+  "config": {
+    "sort-packages": true
+  }
 }
