@@ -5,3 +5,4 @@
 var
 tests/coverage
 .php_cs.cache
+composer.lock
