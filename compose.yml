@@ -15,3 +15,11 @@ services:
       dockerfile: docker/php7.1/Dockerfile
     volumes:
       - .:/app
+  php7.2:
+    image: php7.2:latest
+    container_name: php7.2
+    build:
+      context: .
+      dockerfile: docker/php7.2/Dockerfile
+    volumes:
+      - .:/app
