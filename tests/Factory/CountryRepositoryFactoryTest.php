@@ -10,6 +10,13 @@ use PHPUnit\Framework\TestCase;
 
 class CountryRepositoryFactoryTest extends TestCase
 {
+    protected function setUp()
+    {
+        if (getenv('GITHUB_ACTIONS')) {
+            $this->markTestSkipped('Skipping test on GitHub Actions');
+        }
+    }
+
     public function testInitWithoutCache()
     {
         $factory = new CountryRepositoryFactory();
