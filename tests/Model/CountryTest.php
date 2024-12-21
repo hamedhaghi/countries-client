@@ -92,9 +92,9 @@ class CountryTest extends TestCase
         $this->assertInstanceOf(Name::class, $country->getName());
         $this->assertInstanceOf(NativeName::class, $country->getName()->getNativeName()[0]);
         $this->assertContains('de', $country->getTld());
-        $this->assertContains('cca2', $country->getCca2());
-        $this->assertContains('ccn3', $country->getCcn3());
-        $this->assertContains('cca3', $country->getCca3());
+        $this->assertEquals('cca2', $country->getCca2());
+        $this->assertEquals('ccn3', $country->getCcn3());
+        $this->assertEquals('cca3', $country->getCca3());
         $this->assertTrue($country->getIndependent());
         $this->assertEquals('status', $country->getStatus());
         $this->assertTrue($country->getUnMember());
@@ -104,8 +104,8 @@ class CountryTest extends TestCase
         $this->assertInstanceOf(IDD::class, $country->getIdd());
         $this->assertContains('Berlin', $country->getCapital());
         $this->assertContains('Deutschland', $country->getAltSpellings());
-        $this->assertContains('Europe', $country->getRegion());
-        $this->assertContains('Europe', $country->getSubregion());
+        $this->assertEquals('Europe', $country->getRegion());
+        $this->assertEquals('Europe', $country->getSubregion());
         $this->assertInstanceOf(Language::class, $country->getLanguages()['eng']);
         $this->assertInstanceOf(Translation::class, $country->getTranslations()['ita']);
         $this->assertInstanceOf(Demonym::class, $country->getDemonyms()['f']);
