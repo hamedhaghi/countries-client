@@ -1,0 +1,59 @@
+name: Test All Tags
+
+on:
+  workflow_dispatch: # Allows manual trigger of this workflow
+
+jobs:
+  test-tags:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        include:
+          # Defining tags and corresponding PHP versions for each tag
+          - tag: '1.0.0'
+            php_version: '7.0'
+          - tag: '1.0.1'
+            php_version: '7.1'
+          - tag: '1.0.2'
+            php_version: '7.2'
+          - tag: '1.0.3'
+            php_version: '7.3'
+          - tag: '1.0.4'
+            php_version: '7.4'
+          - tag: '1.0.5'
+            php_version: '8.0'
+          - tag: '1.0.6'
+            php_version: '8.1'
+          - tag: '1.0.7'
+            php_version: '8.2'
+          - tag: '1.0.8'
+            php_version: '8.3'
+
+    steps:
+      # Checkout code and fetch all tags
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # Ensure all tags are fetched
+
+      # Checkout the specific tag from the matrix
+      - name: Checkout tag ${{ matrix.tag }}
+        run: |
+          git checkout ${{ matrix.tag }}
+
+      # Set up PHP for the specific version in the matrix
+      - name: Set up PHP ${{ matrix.php_version }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php_version }}
+
+      # Install dependencies using Composer
+      - name: Install dependencies
+        run: |
+          composer install --no-progress --no-interaction
+
+      # Run checks
+      - name: Run Checks
+        run: |
+          composer run-script check
