@@ -63,3 +63,11 @@ services:
       dockerfile: docker/php8.2/Dockerfile
     volumes:
       - .:/app
+  php8.3:
+    image: php8.3:latest
+    container_name: php8.3
+    build:
+      context: .
+      dockerfile: docker/php8.3/Dockerfile
+    volumes:
+      - .:/app
