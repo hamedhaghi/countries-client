@@ -45,7 +45,7 @@ class CountryRepositoryTest extends TestCase
     /** @var SerializerInterface */
     protected $serializer;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->client = $this->createMock(Client::class);
         $this->response = $this->createMock(ResponseInterface::class);

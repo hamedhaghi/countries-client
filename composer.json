@@ -22,16 +22,16 @@
     }
   },
   "require": {
-    "php": "^7.4",
+    "php": "^8.0",
     "guzzlehttp/guzzle": "^7.0",
-    "symfony/cache": "4.4.*",
-    "symfony/property-access": "4.4.*",
-    "symfony/serializer": "4.4.*"
+    "symfony/cache": "^5.2",
+    "symfony/property-access": "^5.2",
+    "symfony/serializer": "^5.2"
   },
   "require-dev": {
-    "phpunit/phpunit": "^7.0",
-    "phpstan/phpstan": "^1.8",
-    "friendsofphp/php-cs-fixer": "^2.17"
+    "phpunit/phpunit": "^9.0",
+    "phpstan/phpstan": "^1.0",
+    "friendsofphp/php-cs-fixer": "^3.0"
   },
   "scripts": {
     "test": "phpunit",
