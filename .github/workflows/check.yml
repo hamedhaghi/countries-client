@@ -1,0 +1,24 @@
+name: Package Check
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: composer install --prefer-dist --no-progress
+
+    - name: Run checks
+      run: composer run-script check
