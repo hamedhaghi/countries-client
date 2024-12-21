@@ -31,3 +31,11 @@ services:
       dockerfile: docker/php7.3/Dockerfile
     volumes:
       - .:/app
+  php7.4:
+    image: php7.4:latest
+    container_name: php7.4
+    build:
+      context: .
+      dockerfile: docker/php7.4/Dockerfile
+    volumes:
+      - .:/app
