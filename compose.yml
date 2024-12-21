@@ -1,6 +1,6 @@
 services:
   php7.0:
-    image: custom-php7.0:latest
+    image: php7.0:latest
     container_name: php7.0
     build:
       context: .
