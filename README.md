@@ -23,9 +23,9 @@ composer require hamedhaghi/countries
 ## Usage Example
 
 ```php
-require 'vendor/autoload.php';
+require_once 'vendor/autoload.php';
 
-use Hamed\Countries\Factory;
+use Hamed\Countries\Factory\CountryRepositoryFactory;
 
 // Initialize the client
 $factory = new CountryRepositoryFactory();
