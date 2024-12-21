@@ -47,3 +47,11 @@ services:
       dockerfile: docker/php8.0/Dockerfile
     volumes:
       - .:/app
+  php8.1:
+    image: php8.1:latest
+    container_name: php8.1
+    build:
+      context: .
+      dockerfile: docker/php8.1/Dockerfile
+    volumes:
+      - .:/app
