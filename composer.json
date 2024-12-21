@@ -22,7 +22,7 @@
     }
   },
   "require": {
-    "php": "^7.0",
+    "php": "^7.1",
     "guzzlehttp/guzzle": "^6.3",
     "symfony/cache": "3.4.*",
     "symfony/property-access": "3.4.*",
@@ -35,7 +35,7 @@
   },
   "scripts": {
     "test": "phpunit",
-    "analyze": "phpstan analyse src --level=5 --no-progress",
+    "analyze": "phpstan analyse src --level=5",
     "fix": "php-cs-fixer fix .",
     "coverage": "phpunit --coverage-html tests/coverage",
     "check": [
